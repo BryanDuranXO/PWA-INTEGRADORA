@@ -2,7 +2,11 @@ package mx.edu.utez.Back_Hospital.Model.Paciente;
 
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
+import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
+import mx.edu.utez.Back_Hospital.Model.Pacientes_Camas.Pacientes_Camas;
 import mx.edu.utez.Back_Hospital.Model.Rol.RolBean;
+
+import java.util.List;
 
 @Entity
 @Table(name = "pacientes")
@@ -40,16 +44,15 @@ public class PacienteBean {
     @JoinColumn(name = "id_rol", nullable = false)
     private RolBean rolpaciente;
 
+    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
+    private java.util.List<Pacientes_Camas> pacientesCamas;
 
 
-    @OneToOne(mappedBy = "paciente")
-    private CamaBean cama;
 
     public PacienteBean() {
     }
 
-
-    public PacienteBean(Long id, String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, CamaBean cama) {
+    public PacienteBean(Long id, String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
         this.id = id;
         this.nombre = nombre;
         this.materno = materno;
@@ -60,10 +63,10 @@ public class PacienteBean {
         this.status = status;
         this.alta = alta;
         this.rolpaciente = rolpaciente;
-        this.cama = cama;
+        this.pacientesCamas = pacientesCamas;
     }
 
-    public PacienteBean(String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, CamaBean cama) {
+    public PacienteBean(String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
         this.nombre = nombre;
         this.materno = materno;
         this.paterno = paterno;
@@ -73,31 +76,7 @@ public class PacienteBean {
         this.status = status;
         this.alta = alta;
         this.rolpaciente = rolpaciente;
-        this.cama = cama;
-    }
-
-    public CamaBean getCama() {
-        return cama;
-    }
-
-    public void setCama(CamaBean cama) {
-        this.cama = cama;
-    }
-
-    public Boolean getAlta() {
-        return alta;
-    }
-
-    public void setAlta(Boolean alta) {
-        this.alta = alta;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
+        this.pacientesCamas = pacientesCamas;
     }
 
     public Long getId() {
@@ -156,11 +135,35 @@ public class PacienteBean {
         this.token = token;
     }
 
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public Boolean getAlta() {
+        return alta;
+    }
+
+    public void setAlta(Boolean alta) {
+        this.alta = alta;
+    }
+
     public RolBean getRolpaciente() {
         return rolpaciente;
     }
 
     public void setRolpaciente(RolBean rolpaciente) {
         this.rolpaciente = rolpaciente;
+    }
+
+    public List<Pacientes_Camas> getPacientesCamas() {
+        return pacientesCamas;
+    }
+
+    public void setPacientesCamas(List<Pacientes_Camas> pacientesCamas) {
+        this.pacientesCamas = pacientesCamas;
     }
 }
