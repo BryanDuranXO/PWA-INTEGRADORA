@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
+import mx.edu.utez.Back_Hospital.Model.Pacientes_Camas.Pacientes_Camas;
 
 import java.util.List;
 
@@ -21,10 +22,6 @@ public class CamaBean {
     @Column(name = "ocupada", columnDefinition = "BOOL")
     private boolean ocupada;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private PacienteBean paciente;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_isla", nullable = false)
     private IslaBean islaBean;
@@ -32,47 +29,27 @@ public class CamaBean {
     @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)
     private java.util.List<Enfermeros_Camas> asignacionesEnfermeros;
 
-    public CamaBean(Long id, int cama, boolean ocupada, PacienteBean paciente, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros) {
-        this.id = id;
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.paciente = paciente;
-        this.islaBean = islaBean;
-        this.asignacionesEnfermeros = asignacionesEnfermeros;
-    }
-
-    public CamaBean(int cama, boolean ocupada, PacienteBean paciente, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros) {
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.paciente = paciente;
-        this.islaBean = islaBean;
-        this.asignacionesEnfermeros = asignacionesEnfermeros;
-    }
-
-    public CamaBean(Long id, int cama, boolean ocupada, PacienteBean paciente, IslaBean islaBean) {
-        this.id = id;
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.paciente = paciente;
-        this.islaBean = islaBean;
-    }
-
-    public CamaBean(int cama, boolean ocupada, PacienteBean paciente, IslaBean islaBean) {
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.paciente = paciente;
-        this.islaBean = islaBean;
-    }
-
-    public IslaBean getIslaBean() {
-        return islaBean;
-    }
-
-    public void setIslaBean(IslaBean islaBean) {
-        this.islaBean = islaBean;
-    }
+    @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)
+    private java.util.List<Pacientes_Camas> pacientesCamas;
 
     public CamaBean() {
+    }
+
+    public CamaBean(Long id, int cama, boolean ocupada, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros, List<Pacientes_Camas> pacientesCamas) {
+        this.id = id;
+        this.cama = cama;
+        this.ocupada = ocupada;
+        this.islaBean = islaBean;
+        this.asignacionesEnfermeros = asignacionesEnfermeros;
+        this.pacientesCamas = pacientesCamas;
+    }
+
+    public CamaBean(int cama, boolean ocupada, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros, List<Pacientes_Camas> pacientesCamas) {
+        this.cama = cama;
+        this.ocupada = ocupada;
+        this.islaBean = islaBean;
+        this.asignacionesEnfermeros = asignacionesEnfermeros;
+        this.pacientesCamas = pacientesCamas;
     }
 
     public Long getId() {
@@ -99,11 +76,27 @@ public class CamaBean {
         this.ocupada = ocupada;
     }
 
-    public PacienteBean getPaciente() {
-        return paciente;
+    public IslaBean getIslaBean() {
+        return islaBean;
     }
 
-    public void setPaciente(PacienteBean paciente) {
-        this.paciente = paciente;
+    public void setIslaBean(IslaBean islaBean) {
+        this.islaBean = islaBean;
+    }
+
+    public List<Enfermeros_Camas> getAsignacionesEnfermeros() {
+        return asignacionesEnfermeros;
+    }
+
+    public void setAsignacionesEnfermeros(List<Enfermeros_Camas> asignacionesEnfermeros) {
+        this.asignacionesEnfermeros = asignacionesEnfermeros;
+    }
+
+    public List<Pacientes_Camas> getPacientesCamas() {
+        return pacientesCamas;
+    }
+
+    public void setPacientesCamas(List<Pacientes_Camas> pacientesCamas) {
+        this.pacientesCamas = pacientesCamas;
     }
 }
