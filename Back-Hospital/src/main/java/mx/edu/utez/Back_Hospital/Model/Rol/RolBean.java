@@ -30,6 +30,10 @@ public class RolBean {
     public RolBean() {
     }
 
+    public RolBean(String rol) {
+        this.rol = rol;
+    }
+
     public RolBean(Long id, String rol, Set<EnfermeroBean> enfermeroBeanSet, Set<PacienteBean> pacienteBeanSet, Set<IslaBean> islaBeans) {
         this.id = id;
         this.rol = rol;
