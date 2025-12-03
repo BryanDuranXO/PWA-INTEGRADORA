@@ -33,6 +33,12 @@ public class EnfermeroBean {
     @Column(name = "status", columnDefinition = "BOOL")
     private Boolean status;
 
+    @Column(name = "usuario")
+    private String usuario;
+
+    @Column(name = "password", columnDefinition = "TEXT")
+    private String password;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rol", nullable = false)
     private RolBean rolenfermero;
@@ -47,7 +53,8 @@ public class EnfermeroBean {
     public EnfermeroBean() {
     }
 
-    public EnfermeroBean(Long id, String nombre, String materno, String paterno, String telefono, String token, Boolean status, RolBean rolenfermero, IslaBean isla, List<Enfermeros_Camas> asignacionesCamas) {
+
+    public EnfermeroBean(Long id, String nombre, String materno, String paterno, String telefono, String token, Boolean status, String usuario, String password, RolBean rolenfermero, IslaBean isla, List<Enfermeros_Camas> asignacionesCamas) {
         this.id = id;
         this.nombre = nombre;
         this.materno = materno;
@@ -55,44 +62,49 @@ public class EnfermeroBean {
         this.telefono = telefono;
         this.token = token;
         this.status = status;
+        this.usuario = usuario;
+        this.password = password;
         this.rolenfermero = rolenfermero;
         this.isla = isla;
         this.asignacionesCamas = asignacionesCamas;
     }
 
-    public EnfermeroBean(String nombre, String materno, String paterno, String telefono, String token, Boolean status, RolBean rolenfermero, IslaBean isla, List<Enfermeros_Camas> asignacionesCamas) {
+    public EnfermeroBean(String nombre, String materno, String paterno, String telefono, String token, Boolean status, String usuario, String password, RolBean rolenfermero, IslaBean isla, List<Enfermeros_Camas> asignacionesCamas) {
         this.nombre = nombre;
         this.materno = materno;
         this.paterno = paterno;
         this.telefono = telefono;
         this.token = token;
         this.status = status;
+        this.usuario = usuario;
+        this.password = password;
         this.rolenfermero = rolenfermero;
         this.isla = isla;
         this.asignacionesCamas = asignacionesCamas;
     }
 
-    public EnfermeroBean(Long id, String nombre, String materno, String paterno, String telefono, String token, Boolean status, RolBean rolenfermero, IslaBean isla) {
-        this.id = id;
-        this.nombre = nombre;
-        this.materno = materno;
-        this.paterno = paterno;
-        this.telefono = telefono;
-        this.token = token;
-        this.status = status;
-        this.rolenfermero = rolenfermero;
-        this.isla = isla;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public EnfermeroBean(String nombre, String materno, String paterno, String telefono, String token, Boolean status, RolBean rolenfermero, IslaBean isla) {
-        this.nombre = nombre;
-        this.materno = materno;
-        this.paterno = paterno;
-        this.telefono = telefono;
-        this.token = token;
-        this.status = status;
-        this.rolenfermero = rolenfermero;
-        this.isla = isla;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Enfermeros_Camas> getAsignacionesCamas() {
+        return asignacionesCamas;
+    }
+
+    public void setAsignacionesCamas(List<Enfermeros_Camas> asignacionesCamas) {
+        this.asignacionesCamas = asignacionesCamas;
     }
 
     public IslaBean getIsla() {

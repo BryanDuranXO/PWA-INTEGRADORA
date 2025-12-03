@@ -21,6 +21,14 @@ public class IslaBean {
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
+    @Column(name = "usuario")
+    private String usuario;
+
+    @Column(name = "password", columnDefinition = "TEXT")
+    private String password;
+
+    @Column(name = "status", columnDefinition = "BOOL")
+    private Boolean status;
 
     @OneToMany(mappedBy = "isla", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EnfermeroBean> enfermeroBeanSet ;
@@ -33,33 +41,24 @@ public class IslaBean {
     private RolBean rolisla;
 
 
-    public IslaBean(Long id, String numero, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
-        this.id = id;
-        this.numero = numero;
-        this.enfermeroBeanSet = enfermeroBeanSet;
-        this.camaBeans = camaBeans;
-        this.rolisla = rolisla;
-    }
-
-    public IslaBean(String numero, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
-        this.numero = numero;
-        this.enfermeroBeanSet = enfermeroBeanSet;
-        this.camaBeans = camaBeans;
-        this.rolisla = rolisla;
-    }
-
-    public IslaBean(Long id, String numero, String token, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
+    public IslaBean(Long id, String numero, String token, String usuario, String password, Boolean status, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
         this.id = id;
         this.numero = numero;
         this.token = token;
+        this.usuario = usuario;
+        this.password = password;
+        this.status = status;
         this.enfermeroBeanSet = enfermeroBeanSet;
         this.camaBeans = camaBeans;
         this.rolisla = rolisla;
     }
 
-    public IslaBean(String numero, String token, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
+    public IslaBean(String numero, String token, String usuario, String password, Boolean status, Set<EnfermeroBean> enfermeroBeanSet, Set<CamaBean> camaBeans, RolBean rolisla) {
         this.numero = numero;
         this.token = token;
+        this.usuario = usuario;
+        this.password = password;
+        this.status = status;
         this.enfermeroBeanSet = enfermeroBeanSet;
         this.camaBeans = camaBeans;
         this.rolisla = rolisla;

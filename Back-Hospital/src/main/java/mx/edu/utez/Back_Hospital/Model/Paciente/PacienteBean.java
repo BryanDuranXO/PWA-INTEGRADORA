@@ -1,5 +1,6 @@
 package mx.edu.utez.Back_Hospital.Model.Paciente;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
@@ -31,6 +32,9 @@ public class PacienteBean {
     @Column(name = "telefono", length = 10)
     private String telefono;
 
+    @Column(name = "curp", length = 18)
+    private String curp;
+
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
@@ -40,11 +44,19 @@ public class PacienteBean {
     @Column(name = "alta", columnDefinition = "BOOL")
     private Boolean alta;
 
+    @Column(name = "usuario")
+    private String usuario;
+
+    @Column(name = "password", columnDefinition = "TEXT")
+    private String password;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rol", nullable = false)
+    @JsonIgnore
     private RolBean rolpaciente;
 
     @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
+    @JsonIgnore
     private java.util.List<Pacientes_Camas> pacientesCamas;
 
 
@@ -52,31 +64,75 @@ public class PacienteBean {
     public PacienteBean() {
     }
 
-    public PacienteBean(Long id, String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
+    public PacienteBean(Long id, String nombre, String materno, String paterno, String padecimientos, String telefono, String curp, String token, Boolean status, Boolean alta, String usuario, String password, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
         this.id = id;
         this.nombre = nombre;
         this.materno = materno;
         this.paterno = paterno;
         this.padecimientos = padecimientos;
         this.telefono = telefono;
+        this.curp = curp;
         this.token = token;
         this.status = status;
         this.alta = alta;
+        this.usuario = usuario;
+        this.password = password;
         this.rolpaciente = rolpaciente;
         this.pacientesCamas = pacientesCamas;
     }
 
-    public PacienteBean(String nombre, String materno, String paterno, String padecimientos, String telefono, String token, Boolean status, Boolean alta, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
+    public PacienteBean(String nombre, String materno, String paterno, String padecimientos, String telefono, String curp, String token, Boolean status, Boolean alta, String usuario, String password, RolBean rolpaciente, List<Pacientes_Camas> pacientesCamas) {
         this.nombre = nombre;
         this.materno = materno;
         this.paterno = paterno;
         this.padecimientos = padecimientos;
         this.telefono = telefono;
+        this.curp = curp;
         this.token = token;
         this.status = status;
         this.alta = alta;
+        this.usuario = usuario;
+        this.password = password;
         this.rolpaciente = rolpaciente;
         this.pacientesCamas = pacientesCamas;
+    }
+
+    public PacienteBean(String nombre, String materno, String paterno, String padecimientos, String telefono, String curp, Boolean status, Boolean alta, String usuario, String password, RolBean rolpaciente) {
+        this.nombre = nombre;
+        this.materno = materno;
+        this.paterno = paterno;
+        this.padecimientos = padecimientos;
+        this.telefono = telefono;
+        this.curp = curp;
+        this.status = status;
+        this.alta = alta;
+        this.usuario = usuario;
+        this.password = password;
+        this.rolpaciente = rolpaciente;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Long getId() {
