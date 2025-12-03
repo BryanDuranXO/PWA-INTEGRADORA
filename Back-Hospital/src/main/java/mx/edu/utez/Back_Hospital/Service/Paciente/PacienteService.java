@@ -6,6 +6,7 @@ import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +17,12 @@ import java.util.Optional;
 @Service
 @Transactional
 public class PacienteService {
+
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> getAllPacientes(){
@@ -59,6 +64,10 @@ public class PacienteService {
 
             // 3. Crear un nuevo paciente si no existe, y marcarlo como ACTIVO
             paciente.setAlta(false);
+
+            // ENCRIPTAR LA CONTRASEÑA antes de guardar
+            paciente.setPassword(passwordEncoder.encode(paciente.getPassword()));
+
             PacienteBean nuevo = pacienteRepository.saveAndFlush(paciente);
 
             // Si manejas histórico:
@@ -70,6 +79,4 @@ public class PacienteService {
             );
         }
     }
-
-
 }

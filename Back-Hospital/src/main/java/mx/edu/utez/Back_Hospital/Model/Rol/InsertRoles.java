@@ -11,16 +11,16 @@ public class InsertRoles {
 
     @PostConstruct
     public void init(){
-        if(!rolRepository.existsByRol("isla")){
-            rolRepository.save(new RolBean("isla"));
+        if(!rolRepository.existsByRol("ISLA")){
+            rolRepository.save(new RolBean("ISLA"));
         }
 
-        if(!rolRepository.existsByRol("enfermero")){
-            rolRepository.save(new RolBean("enfermero"));
+        if(!rolRepository.existsByRol("ENFERMERO")){
+            rolRepository.save(new RolBean("ENFERMERO"));
         }
 
-        if(!rolRepository.existsByRol("paciente")){
-            rolRepository.save(new RolBean("paciente"));
+        if(!rolRepository.existsByRol("PACIENTE")){
+            rolRepository.save(new RolBean("PACIENTE"));
         }
     }
 }
