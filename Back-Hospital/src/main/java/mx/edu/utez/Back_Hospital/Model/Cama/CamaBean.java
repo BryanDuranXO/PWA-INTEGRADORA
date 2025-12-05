@@ -1,5 +1,6 @@
 package mx.edu.utez.Back_Hospital.Model.Cama;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
@@ -24,6 +25,7 @@ public class CamaBean {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_isla", nullable = false)
+    @JsonIgnore
     private IslaBean islaBean;
 
     @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)
@@ -33,6 +35,19 @@ public class CamaBean {
     private java.util.List<Pacientes_Camas> pacientesCamas;
 
     public CamaBean() {
+    }
+
+    public CamaBean(int cama, boolean ocupada, IslaBean islaBean) {
+        this.cama = cama;
+        this.ocupada = ocupada;
+        this.islaBean = islaBean;
+    }
+
+    public CamaBean(Long id, int cama, boolean ocupada, IslaBean islaBean) {
+        this.id = id;
+        this.cama = cama;
+        this.ocupada = ocupada;
+        this.islaBean = islaBean;
     }
 
     public CamaBean(Long id, int cama, boolean ocupada, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros, List<Pacientes_Camas> pacientesCamas) {

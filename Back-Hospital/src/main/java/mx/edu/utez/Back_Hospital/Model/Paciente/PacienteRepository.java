@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface PacienteRepository extends JpaRepository<PacienteBean, Long> {
 
-    Optional<PacienteBean> findByCurp(String curp);
-    Optional<PacienteBean> findByUsuario(String usuario);
-
-    String usuario(String usuario);
+     Optional<PacienteBean> findByCurp(String curp);
+//    Optional<PacienteBean> findByUsuario(String usuario);
+//
+//    String usuario(String usuario);
 }

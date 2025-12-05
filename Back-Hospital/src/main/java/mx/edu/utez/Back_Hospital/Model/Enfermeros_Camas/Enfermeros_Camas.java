@@ -21,7 +21,7 @@ public class Enfermeros_Camas
     private CamaBean cama;
 
     @Column(columnDefinition = "BOOL")
-    private boolean activo = true;
+    private boolean activo;
 
     public Enfermeros_Camas() {
 
@@ -29,7 +29,7 @@ public class Enfermeros_Camas
 
     public void EnfermeroCamaBean() {}
 
-    public void EnfermeroCamaBean(EnfermeroBean enfermero, CamaBean cama, boolean activo) {
+    public Enfermeros_Camas(EnfermeroBean enfermero, CamaBean cama, boolean activo) {
         this.enfermero = enfermero;
         this.cama = cama;
         this.activo = activo;

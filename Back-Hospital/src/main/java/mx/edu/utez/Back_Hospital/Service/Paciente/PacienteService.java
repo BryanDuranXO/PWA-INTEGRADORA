@@ -30,7 +30,7 @@ public class PacienteService {
         return new ResponseEntity<>(new ApiResponse(pacientes, HttpStatus.OK, "obteniendo a todos los pacientes"), HttpStatus.OK);
     }
 
-    @Transactional(rollbackFor = {SQLException.class})
+   @Transactional(rollbackFor = {SQLException.class})
     public ResponseEntity<ApiResponse> addPaciente(PacienteBean paciente){
 
         Optional<PacienteBean> optionalPaciente = pacienteRepository.findByCurp(paciente.getCurp());
