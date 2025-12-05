@@ -4,6 +4,8 @@ import mx.edu.utez.Back_Hospital.Config.ApiResponse;
 import mx.edu.utez.Back_Hospital.Model.Paciente.DTO.DTOPaciente;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
+import mx.edu.utez.Back_Hospital.Model.Rol.RolBean;
+import mx.edu.utez.Back_Hospital.Model.Rol.RolRepository;
 import mx.edu.utez.Back_Hospital.Service.Paciente.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +22,25 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
+    @Autowired
+    private RolRepository rolRepository;
+
     @GetMapping("/")
     public ResponseEntity<ApiResponse> findAll() {
         return pacienteService.getAllPacientes();
     }
 
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> save(@Validated(DTOPaciente.Register.class) @RequestBody DTOPaciente dtoPaciente) {
-        return pacienteService.addPaciente(dtoPaciente.toEntity());
+    public ResponseEntity<ApiResponse> save(
+            @Validated(DTOPaciente.Register.class) @RequestBody DTOPaciente dtoPaciente) {
+
+        RolBean rol = rolRepository.findById(dtoPaciente.getIdRol())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        PacienteBean paciente = dtoPaciente.toEntity(rol);
+
+        // Llamar al servicio
+        return pacienteService.addPaciente(paciente);
     }
+
 }

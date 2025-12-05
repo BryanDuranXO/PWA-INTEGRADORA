@@ -8,6 +8,8 @@ import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaRepository;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
+import mx.edu.utez.Back_Hospital.Model.Usuarios.UsuarioBean;
+import mx.edu.utez.Back_Hospital.Model.Usuarios.UsuarioRepository;
 import mx.edu.utez.Back_Hospital.security.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,38 +22,31 @@ import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    @Autowired
-    private PacienteRepository pacienteRepository;
 
     @Autowired
-    private EnfermeroRepository enfermeroRepository;
-
-    @Autowired
-    private IslaRepository islaRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String usuario) throws UsernameNotFoundException {
 
-        // 1. Buscar en PACIENTES
-        Optional<PacienteBean> paciente = pacienteRepository.findByUsuario(usuario);
-        if (paciente.isPresent()) {
-            return UserDetailsImpl.buildPaciente(paciente.get());
+        UsuarioBean user = usuarioRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        // Detectar tipo real (Paciente, Enfermero o Isla)
+        if (user instanceof PacienteBean paciente) {
+            return UserDetailsImpl.buildPaciente(paciente);
         }
 
-        // 2. Buscar en ENFERMEROS
-        Optional<EnfermeroBean> enfermero = enfermeroRepository.findByUsuario(usuario);
-        if (enfermero.isPresent()) {
-            return UserDetailsImpl.buildEnfermero(enfermero.get());
+        if (user instanceof EnfermeroBean enfermero) {
+            return UserDetailsImpl.buildEnfermero(enfermero);
         }
 
-        // 3. Buscar en ISLAS
-        Optional<IslaBean> isla = islaRepository.findByUsuario(usuario);
-        if (isla.isPresent()) {
-            return UserDetailsImpl.buildIsla(isla.get());
+        if (user instanceof IslaBean isla) {
+            return UserDetailsImpl.buildIsla(isla);
         }
 
-        throw new UsernameNotFoundException("Usuario no encontrado");
+        // Si llega aquí, es un usuario genérico
+        return UserDetailsImpl.buildGeneric(user);
     }
 }
-

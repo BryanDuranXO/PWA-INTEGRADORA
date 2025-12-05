@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface IslaRepository extends JpaRepository<IslaBean,Long> {
-    Optional<IslaBean> findByUsuario(String usuario);
+    Optional<IslaBean> findByNumero(String numero);
 }

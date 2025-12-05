@@ -4,6 +4,7 @@ import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
 
+import mx.edu.utez.Back_Hospital.Model.Usuarios.UsuarioBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
     /* ============================================================
      *    1) BUILD PARA PACIENTE
      * ============================================================ */
-    public static UserDetailsImpl buildPaciente(PacienteBean user) {
+    public static UserDetailsImpl buildPaciente(UsuarioBean user) {
         Set<GrantedAuthority> authorities =
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_PACIENTE"));
 
@@ -51,37 +52,47 @@ public class UserDetailsImpl implements UserDetails {
         );
     }
 
-
-    /* ============================================================
-     *    2) BUILD PARA ENFERMERO
-     * ============================================================ */
-    public static UserDetailsImpl buildEnfermero(EnfermeroBean user) {
+    public static UserDetailsImpl buildEnfermero(UsuarioBean user) {
         Set<GrantedAuthority> authorities =
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_ENFERMERO"));
 
         return new UserDetailsImpl(
                 user.getUsuario(),
                 user.getPassword(),
-                true,
+                user.isStatus(),
                 authorities
         );
     }
 
-
-    /* ============================================================
-     *    3) BUILD PARA ISLA
-     * ============================================================ */
-    public static UserDetailsImpl buildIsla(IslaBean user) {
+    public static UserDetailsImpl buildIsla(UsuarioBean user) {
         Set<GrantedAuthority> authorities =
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_ISLA"));
 
         return new UserDetailsImpl(
                 user.getUsuario(),
                 user.getPassword(),
-                true,
+                user.isStatus(),
                 authorities
         );
     }
+
+    public static UserDetailsImpl buildGeneric(UsuarioBean user) {
+        // Usa el rol que venga desde la BD
+        Set<GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority(user.getRol().getRol()));
+
+        return new UserDetailsImpl(
+                user.getUsuario(),
+                user.getPassword(),
+                user.isStatus(),
+                authorities
+        );
+    }
+
+
+
+
+
 
 
 

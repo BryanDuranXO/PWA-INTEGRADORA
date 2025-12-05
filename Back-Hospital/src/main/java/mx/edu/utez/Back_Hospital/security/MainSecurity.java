@@ -27,7 +27,6 @@ public class MainSecurity {
 
     private final String[] WHITE_LIST = {
             "/api/auth/**",
-            "/api/paciente/save",
     };
 
     @Bean
@@ -57,6 +56,13 @@ public class MainSecurity {
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST).permitAll()
+                                .requestMatchers("/api/enfermero/new-enfermero").hasAnyRole("ISLA")
+                                .requestMatchers("/api/isla/new-isla").permitAll()//hasRole("ISLA")
+                                .requestMatchers("/api/paciente/save").hasAnyRole("ISLA")
+                                .requestMatchers("/api/cama/").hasAnyRole("ISLA")
+                                .requestMatchers("/api/cama/new-cama").hasAnyRole("ISLA")
+                                .requestMatchers("/api/EC/").hasAnyRole("ISLA")
+                                .requestMatchers("/api/EC/new-EC").hasAnyRole("ISLA")
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

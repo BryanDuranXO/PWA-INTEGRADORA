@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface EnfermeroRepository extends JpaRepository<EnfermeroBean,Long> {
 
     Optional<EnfermeroBean> findByUsuario(String usuario);
+    Optional<EnfermeroBean> findByTelefono(String telefono);
 }
