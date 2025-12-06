@@ -28,6 +28,12 @@ public class EnfermeroController {
         return service.getAll();
     }
 
+    @GetMapping("/camas/{idEnfermero}")
+    public ResponseEntity<ApiResponse> getCamas(@PathVariable Long idEnfermero) {
+        return service.getCamasAsignadas(idEnfermero);
+    }
+
+
     @PostMapping("/new-enfermero")
     public ResponseEntity<ApiResponse> saveEnfermero(@RequestBody DTOEnfermero dtoEnfermero) {
         RolBean rol = rolRepository.findById(dtoEnfermero.getIdRol())

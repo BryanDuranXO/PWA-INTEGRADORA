@@ -51,6 +51,7 @@ public class AuthService {
             responseData.put("token", token);
             responseData.put("correo", principal.getUsername());
             responseData.put("roles", principal.getAuthorities());
+            responseData.put("id", principal.getId());   // << AÑADIDO
 
             return new ResponseEntity<>(
                     new ApiResponse(responseData, HttpStatus.OK, "Token generado"),

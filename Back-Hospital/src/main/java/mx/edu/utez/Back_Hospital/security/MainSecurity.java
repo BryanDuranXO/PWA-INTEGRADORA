@@ -58,6 +58,7 @@ public class MainSecurity {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers("/api/enfermero/new-enfermero").hasAnyRole("ISLA")
+                                .requestMatchers("/api/isla/").hasAnyRole("ISLA")
                                 .requestMatchers("/api/isla/new-isla").permitAll()//hasRole("ISLA")
                                 .requestMatchers("/api/paciente/save").hasAnyRole("ISLA")
                                 .requestMatchers("/api/cama/").hasAnyRole("ISLA")
@@ -66,6 +67,7 @@ public class MainSecurity {
                                 .requestMatchers("/api/e-c/new-ec").hasAnyRole("ISLA")
                                 .requestMatchers("/api/pc/").hasAnyRole("ISLA")
                                 .requestMatchers("/api/pc/new-pc").hasAnyRole("ISLA")
+                                .requestMatchers("/api/enfermero/camas/**").hasAnyRole("ENFERMERO")
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

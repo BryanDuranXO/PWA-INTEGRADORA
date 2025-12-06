@@ -55,6 +55,11 @@ public class DTOIsla {
         return isla;
     }
 
+    public DTOIsla(IslaBean isla){
+        this.id = isla.getId();
+        this.numero = isla.getNumero();
+    }
+
 
     public interface Register{}
     public interface Modify{}

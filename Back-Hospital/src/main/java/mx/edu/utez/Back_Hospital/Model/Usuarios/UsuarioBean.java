@@ -1,5 +1,6 @@
 package mx.edu.utez.Back_Hospital.Model.Usuarios;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Rol.RolBean;
 
@@ -27,6 +28,7 @@ public abstract class UsuarioBean {
     @Column(name = "usuario")
     private String usuario;
 
+    @JsonIgnore
     @Column(name = "password", columnDefinition = "TEXT")
     private String password;
 
