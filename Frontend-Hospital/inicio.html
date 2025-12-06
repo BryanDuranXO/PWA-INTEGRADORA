@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Connect - Iniciar Sesión</title>
+    <style>
+        /* Estilos generales y reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Fondo del cuerpo (ahora con blanco) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff; /* Fondo totalmente blanco */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Contenedor principal de login con un toque de azul */
+        .login-container {
+            background: #f8f9fa; /* Gris muy claro */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .login-container h2 {
+            color: #182848;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        /* Estilo de los campos de entrada */
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .login-container input:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+        }
+        
+        /* Estilo del botón principal */
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+        
+        .login-container button:hover {
+            background: #3b5a9b;
+        }
+        
+        /* Enlace de recuperación de contraseña */
+        .recovery-link {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #4b6cb7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .recovery-link:hover {
+            text-decoration: underline;
+        }
+        
+        #messageArea {
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        
+        .success-message {
+            color: green;
+        }
+        
+        .error-message {
+            color: red;
+        }
+        
+        /* Estilos específicos para la forma de recuperación */
+        #recoveryForm p {
+            margin-bottom: 15px;
+            color: #6c757d;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 id="formTitle">🏥 Acceso al Sistema</h2>
+
+        <div id="loginForm">
+            <input type="text" id="userInput" placeholder="ID de Usuario">
+            <input type="password" id="passwordInput" placeholder="Contraseña">
+            <button onclick="generalLogin()">Entrar</button>
+            <a onclick="showRecoveryForm()" class="recovery-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <div id="recoveryForm" style="display: none;">
+            <p>Ingresa tu ID de usuario para simular la solicitud de restablecimiento.</p>
+            <input type="text" id="recoveryIdInput" placeholder="ID de Usuario">
+            <button onclick="recoverPassword()">Restablecer Contraseña</button>
+            <a onclick="showLoginForm()" class="recovery-link">Volver al inicio de sesión</a>
+        </div>
+
+        <p id="messageArea"></p>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DE SIMULACIÓN (DEBE REFLEJAR LOS ROLES) ---
+        const USERS = {
+            // Islas
+            'I1': { pass: 'isla123', role: 'isla', path: 'isla/index.html' },
+            'I2': { pass: 'isla123', role: 'isla', path: 'isla/index.html' },
+            
+            // Enfermeros
+            'N1': { pass: '1234', role: 'enfermero', path: 'enfermero/index.html' },
+            'N2': { pass: '4321', role: 'enfermero', path: 'enfermero/index.html' },
+            
+            // Paciente (Solo si se requiere acceso por login, sino la app Paciente usa QR)
+            'P101': { pass: 'bed101', role: 'paciente', path: 'paciente/index.html' }
+        };
+
+        const messageArea = document.getElementById('messageArea');
+
+        function generalLogin() {
+            const userId = document.getElementById('userInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            messageArea.textContent = '';
+
+            const user = USERS[userId];
+
+            if (!userId || !password) {
+                messageArea.textContent = 'Ingrese usuario y contraseña.';
+                messageArea.className = 'error-message';
+                return;
+            }
+
+            if (user && user.pass === password) {
+                // 1. Guardar la sesión activa
+                localStorage.setItem('active_session', JSON.stringify({
+                    id: userId,
+                    role: user.role
+                }));
+                
+                // 2. Redirigir
+                messageArea.textContent = `Acceso concedido como ${user.role}. Redirigiendo...`;
+                messageArea.className = 'success-message';
+                
+                setTimeout(() => {
+                    // La ruta es relativa a la ubicación de este archivo (ej. /enfermero/index.html)
+                    window.location.href = user.path; 
+                }, 1000);
+                
+            } else {
+                // Fallo de autenticación
+                messageArea.textContent = 'Credenciales incorrectas. Inténtalo de nuevo.';
+                messageArea.className = 'error-message';
+            }
+        }
+
+        // --- Lógica de Restablecimiento de Contraseña (Simulada) ---
+
+        function showRecoveryForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('recoveryForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = 'Recuperar Contraseña';
+            messageArea.textContent = '';
+            document.getElementById('recoveryIdInput').value = '';
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('recoveryForm').style.display = 'none';
+            document.getElementById('formTitle').textContent = '🏥 Acceso al Sistema';
+            messageArea.textContent = '';
+        }
+
+        function recoverPassword() {
+            const recoveryId = document.getElementById('recoveryIdInput').value.trim();
+            messageArea.textContent = '';
+
+            if (!recoveryId) {
+                messageArea.textContent = 'Por favor, ingresa tu ID de usuario.';
+                messageArea.className = 'error-message';
+                return;
+            }
+
+            const user = USERS[recoveryId];
+
+            if (user) {
+                // SIMULACIÓN: Notificamos el éxito y mostramos un mensaje.
+                messageArea.className = 'success-message';
+                messageArea.textContent = `✅ Solicitud enviada (simulada) para el usuario ${recoveryId}. Revisa tu correo electrónico.`;
+
+                // Volvemos automáticamente al login después de 3 segundos
+                setTimeout(() => {
+                    showLoginForm();
+                }, 3000);
+
+            } else {
+                messageArea.className = 'error-message';
+                messageArea.textContent = 'Error: ID de usuario no registrado en el sistema.';
+            }
+        }
+    </script>
+</body>
+</html>

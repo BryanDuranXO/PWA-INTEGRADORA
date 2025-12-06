@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isla - Panel Administrativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #667eea 0%, #667eea 100%);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .sidebar nav a span {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h2 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .icon.blue { background: #e3f2fd; }
+        .stat-card .icon.green { background: #e8f5e9; }
+        .stat-card .icon.orange { background: #fff3e0; }
+        .stat-card .icon.red { background: #ffebee; }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: #f8f9fa;
+        }
+
+        .table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .qr-display {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .qr-code {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>🏥 Panel Isla</h1>
+        <nav>
+            <a class="active" onclick="showSection('dashboard')">
+                <span>📊</span> Dashboard
+            </a>
+            <a onclick="showSection('beds')">
+                <span>🛏️</span> Camas
+            </a>
+            <a onclick="showSection('nurses')">
+                <span>👨‍⚕️</span> Enfermeros
+            </a>
+            <a onclick="showSection('assignments')">
+                <span>🔗</span> Asignaciones
+            </a>
+            <a onclick="showSection('islands')">
+                <span>🏢</span> Islas
+            </a>
+            <a onclick="showSection('notifications')">
+                <span>🔔</span> Notificaciones
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <section id="dashboard" class="section active">
+            <div class="header">
+                <h2>📊 Dashboard General</h2>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon blue">🛏️</div>
+                    <h3>Total Camas</h3>
+                    <div class="number" id="totalBeds">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon green">👨‍⚕️</div>
+                    <h3>Enfermeros</h3>
+                    <div class="number" id="totalNurses">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon orange">⚠️</div>
+                    <h3>Solicitudes Activas</h3>
+                    <div class="number" id="activeRequests">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon red">🏢</div>
+                    <h3>Islas</h3>
+                    <div class="number" id="totalIslands">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>🔔 Solicitudes Recientes</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cama</th>
+                            <th>Paciente</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentRequests">
+                        <tr><td colspan="4" class="empty-state">No hay solicitudes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="beds" class="section">
+            <div class="header">
+                <h2>🛏️ Gestión de Camas</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lista de Camas</h3>
+                    <button class="btn btn-primary" onclick="openModal('addBedModal')">➕ Nueva Cama</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Paciente</th>
+                            <th>Isla</th>
+                            <th>Enfermero</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bedsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="nurses" class="section">
+            <div class="header">
+                <h2>👨‍⚕️ Gestión de Enfermeros</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lista de Enfermeros</h3>
+                    <button class="btn btn-primary" onclick="openModal('addNurseModal')">➕ Nuevo Enfermero</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Isla</th>
+                            <th>Camas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nursesTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="assignments" class="section">
+            <div class="header">
+                <h2>🔗 Asignaciones</h2>
+            </div>
+
+            <div class="card">
+                <h3>Asignar Enfermero a Cama</h3>
+                <div class="form-group">
+                    <label>Enfermero</label>
+                    <select id="assignNurse"></select>
+                </div>
+                <div class="form-group">
+                    <label>Cama</label>
+                    <select id="assignBed"></select>
+                </div>
+                <button class="btn btn-primary" onclick="createAssignment()">Crear Asignación</button>
+            </div>
+        </section>
+
+        <section id="islands" class="section">
+            <div class="header">
+                <h2>🏢 Gestión de Islas</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lista de Islas</h3>
+                    <button class="btn btn-primary" onclick="openModal('addIslandModal')">➕ Nueva Isla</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ubicación</th>
+                            <th>Enfermeros</th>
+                            <th>Camas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="islandsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="notifications" class="section">
+            <div class="header">
+                <h2>🔔 Historial de Notificaciones</h2>
+            </div>
+
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Cama</th>
+                            <th>Paciente</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notificationsTable"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal" id="addBedModal">
+        <div class="modal-content">
+            <h3>➕ Nueva Cama</h3>
+            <div class="form-group">
+                <label>Número de Cama *</label>
+                <input type="text" id="bedNumber" placeholder="C101">
+            </div>
+            <div class="form-group">
+                <label>Nombre del Paciente *</label>
+                <input type="text" id="patientName" placeholder="Juan Pérez">
+            </div>
+            <div class="form-group">
+                <label>Isla *</label>
+                <select id="bedIsland"></select>
+            </div>
+            <div class="form-group">
+                <label>Notas del Paciente</label>
+                <textarea id="patientNotes" rows="3"></textarea>
+            </div>
+            <div class="qr-display">
+                <p>Código QR para vincular:</p>
+                <div class="qr-code" id="bedQRCode">BED-XXX</div>
+            </div>
+            <div class="form-actions">
+                <button class="btn" onclick="closeModal('addBedModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveBed()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addNurseModal">
+        <div class="modal-content">
+            <h3>➕ Nuevo Enfermero</h3>
+            <div class="form-group">
+                <label>Nombre Completo *</label>
+                <input type="text" id="nurseName" placeholder="María González">
+            </div>
+            <div class="form-group">
+                <label>Isla *</label>
+                <select id="nurseIsland"></select>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="nurseEmail" placeholder="enfermero@hospital.com">
+            </div>
+            <div class="form-actions">
+                <button class="btn" onclick="closeModal('addNurseModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveNurse()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addIslandModal">
+        <div class="modal-content">
+            <h3>➕ Nueva Isla</h3>
+            <div class="form-group">
+                <label>Nombre *</label>
+                <input type="text" id="islandName" placeholder="Isla 1">
+            </div>
+            <div class="form-group">
+                <label>Ubicación *</label>
+                <input type="text" id="islandLocation" placeholder="Piso 2 - Ala Este">
+            </div>
+            <div class="form-actions">
+                <button class="btn" onclick="closeModal('addIslandModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveIsland()">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <h3>Código QR para Cama <span id="qrBedNumber"></span></h3>
+            <div class="qr-display" style="border: none; padding: 0;">
+                <p>Simulación del Código QR que el paciente escanearía:</p>
+                <div class="qr-code" id="actualBedQR" style="font-size: 24px;"></div>
+                <p style="margin-top: 15px; font-size: 14px; color: #555;">(En un entorno real, esto sería una imagen de código de barras)</p>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="closeModal('qrModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- INICIALIZACIÓN Y CONFIGURACIÓN ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeData();
+            renderAll();
+            startAutoRefresh();
+        });
+
+        function initializeData() {
+            // Datos de inicialización, solo se crean si no existen en localStorage
+            if (!localStorage.getItem('hospital_islands')) {
+                const islands = [
+                    { id: 'ISL-1', name: 'Isla Norte', location: 'Piso 2 - Ala Este' },
+                    { id: 'ISL-2', name: 'Isla Sur', location: 'Piso 2 - Ala Oeste' }
+                ];
+                localStorage.setItem('hospital_islands', JSON.stringify(islands));
+            }
+
+            if (!localStorage.getItem('hospital_nurses')) {
+                const nurses = [
+                    { id: 'N1', name: 'Enfermera Ana', island: 'ISL-1', email: 'ana@hospital.com', pass: '1234' },
+                    { id: 'N2', name: 'Enfermero Juan', island: 'ISL-2', email: 'juan@hospital.com', pass: '4321' }
+                ];
+                localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
+            }
+
+            if (!localStorage.getItem('hospital_beds')) {
+                const beds = [
+                    { id: 'B1', number: 'C101', patient: 'Pedro Reyes', nurse: 'N1', island: 'ISL-1', status: 'attention', notes: 'Hipertensión', ailments: 'Dieta baja en sodio' },
+                    { id: 'B2', number: 'C102', patient: 'Maria López', nurse: 'N1', island: 'ISL-1', status: 'ok', notes: 'Post-operatorio', ailments: 'Cambio de vendaje a las 14:00' },
+                    { id: 'B3', number: 'C201', patient: 'Jorge Gil', nurse: 'N2', island: 'ISL-2', status: 'ok', notes: 'Estable', ailments: 'Ninguno' }
+                ];
+                localStorage.setItem('hospital_beds', JSON.stringify(beds));
+            }
+
+            if (!localStorage.getItem('hospital_notifications')) {
+                const notifications = [
+                    { id: Date.now(), bedId: 'B1', bedNumber: 'C101', patientName: 'Pedro Reyes', type: 'call', timestamp: new Date().toISOString(), status: 'pending' }
+                ];
+                localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
+            }
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+            event.target.closest('a').classList.add('active');
+        }
+
+        function openModal(modalId) {
+            populateSelects();
+            document.getElementById(modalId).classList.add('active');
+            // Si es el modal de añadir cama, actualiza el QR inicial
+            if (modalId === 'addBedModal') {
+                document.getElementById('bedQRCode').textContent = 'BED-XXX';
+                document.getElementById('bedNumber').value = '';
+                document.getElementById('bedNumber').focus();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            clearForms();
+        }
+
+        function clearForms() {
+            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+        }
+
+        function renderAll() {
+            updateDashboard();
+            renderBeds();
+            renderNurses();
+            renderIslands();
+            renderNotifications();
+            populateSelects();
+        }
+        
+        // --- FUNCIONES DE RENDERING ---
+
+        function updateDashboard() {
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            const notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
+            
+            document.getElementById('totalBeds').textContent = beds.length;
+            document.getElementById('totalNurses').textContent = nurses.length;
+            document.getElementById('totalIslands').textContent = islands.length;
+            document.getElementById('activeRequests').textContent = notifications.filter(n => n.status === 'pending' || n.status === 'in_process').length;
+
+            const tbody = document.getElementById('recentRequests');
+            const recent = notifications.slice().reverse().slice(0, 5); // Últimas 5 notificaciones
+            
+            if (recent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay solicitudes</td></tr>';
+            } else {
+                tbody.innerHTML = recent.map(n => {
+                    let badgeClass = n.status === 'pending' ? 'warning' : (n.status === 'in_process' ? 'info' : 'success');
+                    let badgeText = n.status === 'pending' ? 'Pendiente' : (n.status === 'in_process' ? 'En Proceso' : 'Atendida');
+                    return `
+                        <tr>
+                            <td>${new Date(n.timestamp).toLocaleTimeString()}</td>
+                            <td>Cama ${n.bedNumber}</td>
+                            <td>${n.patientName}</td>
+                            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function renderBeds() {
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            
+            const tbody = document.getElementById('bedsTable');
+            
+            if (beds.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay camas registradas</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = beds.map(bed => {
+                const nurse = nurses.find(n => n.id === bed.nurse);
+                const island = islands.find(i => i.id === bed.island);
+                return `
+                    <tr>
+                        <td><strong>${bed.number}</strong></td>
+                        <td>${bed.patient}</td>
+                        <td>${island ? island.name : '-'}</td>
+                        <td>${nurse ? nurse.name : 'Sin asignar'}</td>
+                        <td><span class="badge ${bed.status === 'ok' ? 'success' : 'warning'}">${bed.status === 'ok' ? 'Normal' : 'Atención'}</span></td>
+                        <td>
+                            <button class="btn btn-primary" onclick="showBedQR('${bed.id}')" style="margin-right: 5px; padding: 5px 10px;">Ver QR</button>
+                            <button class="btn btn-danger" onclick="deleteBed('${bed.id}')" style="padding: 5px 10px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderNurses() {
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            
+            const tbody = document.getElementById('nursesTable');
+            
+            if (nurses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay enfermeros registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = nurses.map(nurse => {
+                const island = islands.find(i => i.id === nurse.island);
+                const assignedBeds = beds.filter(b => b.nurse === nurse.id).length;
+                return `
+                    <tr>
+                        <td><strong>${nurse.name}</strong></td>
+                        <td>${island ? island.name : '-'}</td>
+                        <td>${assignedBeds} camas</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteNurse('${nurse.id}')" style="padding: 5px 10px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderIslands() {
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            
+            const tbody = document.getElementById('islandsTable');
+            
+            if (islands.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No hay islas registradas</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = islands.map(island => {
+                const islandNurses = nurses.filter(n => n.island === island.id).length;
+                const islandBeds = beds.filter(b => b.island === island.id).length;
+                return `
+                    <tr>
+                        <td><strong>${island.name}</strong></td>
+                        <td>${island.location}</td>
+                        <td>${islandNurses}</td>
+                        <td>${islandBeds}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteIsland('${island.id}')" style="padding: 5px 10px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
+            const tbody = document.getElementById('notificationsTable');
+            
+            if (notifications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay notificaciones</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = notifications.slice().reverse().map(n => {
+                 let badgeClass = n.status === 'pending' ? 'warning' : (n.status === 'in_process' ? 'info' : 'success');
+                 let badgeText = n.status === 'pending' ? 'Pendiente' : (n.status === 'in_process' ? 'En Proceso' : 'Atendida');
+                return `
+                    <tr>
+                        <td>${new Date(n.timestamp).toLocaleString()}</td>
+                        <td>Cama ${n.bedNumber}</td>
+                        <td>${n.patientName}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateSelects() {
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+
+            // Popula los selects de Isla
+            ['bedIsland', 'nurseIsland'].forEach(id => {
+                const select = document.getElementById(id);
+                select.innerHTML = '<option value="">Seleccionar...</option>' +
+                    islands.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+            });
+
+            // Popula los selects de Asignaciones
+            const assignNurse = document.getElementById('assignNurse');
+            assignNurse.innerHTML = '<option value="">Seleccionar...</option>' +
+                nurses.map(n => `<option value="${n.id}">${n.name} (${n.island})</option>`).join('');
+
+            const assignBed = document.getElementById('assignBed');
+            // Solo camas sin enfermero asignado
+            assignBed.innerHTML = '<option value="">Seleccionar...</option>' +
+                beds.filter(b => !b.nurse).map(b => `<option value="${b.id}">Cama ${b.number} - ${b.patient}</option>`).join('');
+        }
+        
+        // --- GESTIÓN DE DATOS (CRUD) ---
+
+        // QR Dinámico en Modal de Añadir Cama
+        document.getElementById('bedNumber').addEventListener('input', function() {
+            document.getElementById('bedQRCode').textContent = this.value.trim().toUpperCase() ? `BED-${this.value.trim().toUpperCase()}` : 'BED-XXX';
+        });
+
+        function saveBed() {
+            const number = document.getElementById('bedNumber').value.trim().toUpperCase();
+            const patient = document.getElementById('patientName').value.trim();
+            const island = document.getElementById('bedIsland').value;
+            const notes = document.getElementById('patientNotes').value.trim();
+
+            if (!number || !patient || !island) {
+                alert('Completa todos los campos obligatorios');
+                return;
+            }
+            
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            
+            // Verificar ID duplicado (para el propósito del ejercicio, usamos el número de cama)
+            if (beds.some(b => b.number === number)) {
+                 alert('⚠️ Ya existe una cama con ese número. Usa otro.');
+                 return;
+            }
+            
+            const newBed = {
+                id: `B-${Date.now()}`, // ID único real
+                number,
+                patient,
+                island,
+                nurse: null,
+                notes,
+                status: 'ok'
+            };
+
+            beds.push(newBed);
+            localStorage.setItem('hospital_beds', JSON.stringify(beds));
+            
+            closeModal('addBedModal');
+            renderAll();
+            alert('✅ Cama creada correctamente');
+        }
+        
+        function deleteBed(bedId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta cama? Se eliminarán también las notificaciones asociadas.')) return;
+            
+            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            beds = beds.filter(b => b.id !== bedId);
+            localStorage.setItem('hospital_beds', JSON.stringify(beds));
+            
+            let notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
+            notifications = notifications.filter(n => n.bedId !== bedId);
+            localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
+            
+            renderAll();
+            alert('🗑️ Cama y notificaciones asociadas eliminadas.');
+        }
+
+        function showBedQR(bedId) {
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            const bed = beds.find(b => b.id === bedId);
+            
+            if (bed) {
+                document.getElementById('qrBedNumber').textContent = bed.number;
+                // El contenido del QR simulado es el número de cama.
+                document.getElementById('actualBedQR').textContent = bed.number; 
+                openModal('qrModal');
+            } else {
+                alert('Cama no encontrada');
+            }
+        }
+
+        function saveNurse() {
+            const name = document.getElementById('nurseName').value.trim();
+            const island = document.getElementById('nurseIsland').value;
+            const email = document.getElementById('nurseEmail').value.trim();
+
+            if (!name || !island) {
+                alert('Completa todos los campos obligatorios');
+                return;
+            }
+
+            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            const newNurse = {
+                id: `N${nurses.length + 1}`, // ID simple secuencial para la simulación
+                name,
+                island,
+                email,
+                pass: '1234', // Contraseña por defecto para simulación
+                status: 'active'
+            };
+
+            nurses.push(newNurse);
+            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
+            
+            closeModal('addNurseModal');
+            renderAll();
+            alert('✅ Enfermero creado correctamente');
+        }
+        
+        function deleteNurse(nurseId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar a este enfermero? Las camas asignadas quedarán sin enfermero.')) return;
+            
+            let nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            nurses = nurses.filter(n => n.id !== nurseId);
+            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
+            
+            // Desasignar camas
+            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            beds.forEach(b => {
+                if (b.nurse === nurseId) {
+                    b.nurse = null;
+                }
+            });
+            localStorage.setItem('hospital_beds', JSON.stringify(beds));
+
+            renderAll();
+            alert('🗑️ Enfermero eliminado y camas reasignadas.');
+        }
+
+        function saveIsland() {
+            const name = document.getElementById('islandName').value.trim();
+            const location = document.getElementById('islandLocation').value.trim();
+
+            if (!name || !location) {
+                alert('Completa todos los campos');
+                return;
+            }
+
+            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            const newIsland = {
+                id: `ISL-${islands.length + 1}`, // ID simple secuencial para la simulación
+                name,
+                location
+            };
+
+            islands.push(newIsland);
+            localStorage.setItem('hospital_islands', JSON.stringify(islands));
+            
+            closeModal('addIslandModal');
+            renderAll();
+            alert('✅ Isla creada correctamente');
+        }
+        
+        function deleteIsland(islandId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta Isla? Se eliminarán todas las camas y enfermeros de esta Isla.')) return;
+            
+            let islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
+            islands = islands.filter(i => i.id !== islandId);
+            localStorage.setItem('hospital_islands', JSON.stringify(islands));
+
+            let nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
+            nurses = nurses.filter(n => n.island !== islandId);
+            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
+            
+            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            beds = beds.filter(b => b.island !== islandId);
+            localStorage.setItem('hospital_beds', JSON.stringify(beds));
+            
+            let notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
+            const bedsToDelete = beds.map(b => b.id);
+            notifications = notifications.filter(n => !bedsToDelete.includes(n.bedId));
+            localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
+
+            renderAll();
+            alert('🗑️ Isla, camas y enfermeros asociados eliminados.');
+        }
+
+        function createAssignment() {
+            const nurseId = document.getElementById('assignNurse').value;
+            const bedId = document.getElementById('assignBed').value;
+
+            if (!nurseId || !bedId) {
+                alert('Selecciona enfermero y cama');
+                return;
+            }
+
+            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
+            const bedIndex = beds.findIndex(b => b.id === bedId);
+            
+            if (bedIndex !== -1) {
+                beds[bedIndex].nurse = nurseId;
+                localStorage.setItem('hospital_beds', JSON.stringify(beds));
+                renderAll();
+                document.getElementById('assignNurse').value = '';
+                document.getElementById('assignBed').value = '';
+                alert('✅ Asignación creada con éxito.');
+            } else {
+                alert('Error: Cama no encontrada.');
+            }
+        }
+        
+        // --- REFRESCAMIENTO AUTOMÁTICO ---
+        
+        function startAutoRefresh() {
+            // Refresca la vista cada 5 segundos para actualizar las estadísticas y notificaciones
+            setInterval(() => {
+                const activeSection = document.querySelector('.section.active').id;
+                
+                // Solo renderizamos lo necesario, o todo si estamos en el dashboard
+                if (activeSection === 'dashboard' || activeSection === 'notifications') {
+                    updateDashboard();
+                    renderNotifications();
+                }
+                
+                // Si la sección de camas está activa, actualizamos su tabla
+                if (activeSection === 'beds') {
+                    renderBeds();
+                    populateSelects(); // Puede que una cama haya sido desasignada por borrar a un enfermero
+                }
+                
+            }, 5000);
+        }
+
+    </script>
+</body>
+</html>
