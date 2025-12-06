@@ -1,5 +1,6 @@
 package mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
@@ -14,6 +15,7 @@ public class Enfermeros_Camas
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_enfermero", nullable = false)
+
     private EnfermeroBean enfermero;
 
     @ManyToOne(fetch = FetchType.LAZY)

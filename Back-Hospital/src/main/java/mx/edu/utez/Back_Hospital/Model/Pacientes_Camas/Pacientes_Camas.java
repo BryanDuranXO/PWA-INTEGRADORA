@@ -23,4 +23,45 @@ public class Pacientes_Camas {
 
     @Column(columnDefinition = "BOOL")
     private boolean activo = true;
+
+    public Pacientes_Camas() {
+    }
+
+    public Pacientes_Camas(PacienteBean paciente, CamaBean cama, boolean activo) {
+        this.paciente = paciente;
+        this.cama = cama;
+        this.activo = activo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PacienteBean getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(PacienteBean paciente) {
+        this.paciente = paciente;
+    }
+
+    public CamaBean getCama() {
+        return cama;
+    }
+
+    public void setCama(CamaBean cama) {
+        this.cama = cama;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 }

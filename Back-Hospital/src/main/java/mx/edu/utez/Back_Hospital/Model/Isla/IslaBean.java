@@ -1,5 +1,6 @@
 package mx.edu.utez.Back_Hospital.Model.Isla;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
@@ -21,6 +22,7 @@ public class IslaBean extends UsuarioBean {
     private String token;
 
     @OneToMany(mappedBy = "isla", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<EnfermeroBean> enfermeroBeanSet ;
 
     @OneToMany(mappedBy = "islaBean", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
