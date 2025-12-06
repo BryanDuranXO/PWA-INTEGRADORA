@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,20 +12,22 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         /* Fondo del cuerpo (ahora con blanco) */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff; /* Fondo totalmente blanco */
+            background: #ffffff;
+            /* Fondo totalmente blanco */
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
+
         /* Contenedor principal de login con un toque de azul */
         .login-container {
-            background: #f8f9fa; /* Gris muy claro */
+            background: #f8f9fa;
+            /* Gris muy claro */
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
@@ -33,13 +36,13 @@
             text-align: center;
             border: 1px solid #e9ecef;
         }
-        
+
         .login-container h2 {
             color: #182848;
             margin-bottom: 25px;
             font-size: 24px;
         }
-        
+
         /* Estilo de los campos de entrada */
         .login-container input {
             width: 100%;
@@ -50,13 +53,13 @@
             font-size: 16px;
             transition: border-color 0.3s;
         }
-        
+
         .login-container input:focus {
             border-color: #4b6cb7;
             outline: none;
             box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
         }
-        
+
         /* Estilo del botón principal */
         .login-container button {
             width: 100%;
@@ -70,11 +73,11 @@
             font-weight: bold;
             transition: background 0.3s, transform 0.1s;
         }
-        
+
         .login-container button:hover {
             background: #3b5a9b;
         }
-        
+
         /* Enlace de recuperación de contraseña */
         .recovery-link {
             display: block;
@@ -84,25 +87,25 @@
             text-decoration: none;
             cursor: pointer;
         }
-        
+
         .recovery-link:hover {
             text-decoration: underline;
         }
-        
+
         #messageArea {
             margin-top: 15px;
             font-size: 14px;
             min-height: 20px;
         }
-        
+
         .success-message {
             color: green;
         }
-        
+
         .error-message {
             color: red;
         }
-        
+
         /* Estilos específicos para la forma de recuperación */
         #recoveryForm p {
             margin-bottom: 15px;
@@ -111,6 +114,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <h2 id="formTitle">🏥 Acceso al Sistema</h2>
@@ -131,58 +135,87 @@
 
         <p id="messageArea"></p>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // --- BASE DE DATOS DE SIMULACIÓN (DEBE REFLEJAR LOS ROLES) ---
-        const USERS = {
-            // Islas
-            'I1': { pass: 'isla123', role: 'isla', path: 'isla/index.html' },
-            'I2': { pass: 'isla123', role: 'isla', path: 'isla/index.html' },
-            
-            // Enfermeros
-            'N1': { pass: '1234', role: 'enfermero', path: 'enfermero/index.html' },
-            'N2': { pass: '4321', role: 'enfermero', path: 'enfermero/index.html' },
-            
-            // Paciente (Solo si se requiere acceso por login, sino la app Paciente usa QR)
-            'P101': { pass: 'bed101', role: 'paciente', path: 'paciente/index.html' }
-        };
-
         const messageArea = document.getElementById('messageArea');
 
-        function generalLogin() {
+        async function generalLogin() {
             const userId = document.getElementById('userInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
+
+            const user = {
+                "usuario": userId,
+                "password": password
+            }
             messageArea.textContent = '';
 
-            const user = USERS[userId];
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                })
 
-            if (!userId || !password) {
-                messageArea.textContent = 'Ingrese usuario y contraseña.';
-                messageArea.className = 'error-message';
-                return;
+                const data = await response.json();
+
+                if (!response.ok) {
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',   // esquina inferior derecha
+                        icon: 'error',
+                        title: 'Usuario o contraseña incorrectos',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#323232',
+                        color: '#fff'
+                    });
+
+                }
+
+                console.log("data", data.data.token);
+                    // Guardar el token en el almacenamiento local
+                    localStorage.setItem('authToken', data.data.token);
+                    console.log("rol", data.data.roles[0])
+                    localStorage.setItem('userRole', data.data.roles[0]);
+                    const role = data.data.roles[0];
+                    localStorage.setItem("username", data.data.correo);
+                    console.log("user", data.data.correo)
+                    localStorage.setItem("userId", data.data.id);
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',   // esquina inferior derecha
+                        icon: 'success',
+                        title: 'Inicio de sesión exitoso',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#323232',
+                        color: '#fff'
+                    });
+
+                    switch(role.authority){
+                        case 'ROLE_ISLA':
+                            window.location.href = './isla/index.html';
+                            break;
+                        case 'ROLE_ENFERMERO':
+                            window.location.href = './enfermero/index.html';
+                            break;
+                        case 'ROLE_PACIENTTE':
+                            window.location.href = './paciente/index.html';
+                            break;
+                        default:
+                            console.error('Rol de usuario no reconocido');
+                    }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                
             }
 
-            if (user && user.pass === password) {
-                // 1. Guardar la sesión activa
-                localStorage.setItem('active_session', JSON.stringify({
-                    id: userId,
-                    role: user.role
-                }));
-                
-                // 2. Redirigir
-                messageArea.textContent = `Acceso concedido como ${user.role}. Redirigiendo...`;
-                messageArea.className = 'success-message';
-                
-                setTimeout(() => {
-                    // La ruta es relativa a la ubicación de este archivo (ej. /enfermero/index.html)
-                    window.location.href = user.path; 
-                }, 1000);
-                
-            } else {
-                // Fallo de autenticación
-                messageArea.textContent = 'Credenciales incorrectas. Inténtalo de nuevo.';
-                messageArea.className = 'error-message';
-            }
+
         }
 
         // --- Lógica de Restablecimiento de Contraseña (Simulada) ---
@@ -231,4 +264,5 @@
         }
     </script>
 </body>
+
 </html>

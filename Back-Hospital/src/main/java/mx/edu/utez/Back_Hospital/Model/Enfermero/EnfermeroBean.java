@@ -20,7 +20,6 @@ public class EnfermeroBean extends UsuarioBean {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_isla", nullable = false)
-    @JsonManagedReference
     private IslaBean isla;
 
     @OneToMany(mappedBy = "enfermero", fetch = FetchType.LAZY)

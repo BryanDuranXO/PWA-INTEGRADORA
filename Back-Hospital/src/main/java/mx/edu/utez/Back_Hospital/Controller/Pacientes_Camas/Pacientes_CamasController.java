@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/pc")
+@CrossOrigin(origins = {"*"})
 public class Pacientes_CamasController {
     @Autowired
     private Pacientes_CamasService service;

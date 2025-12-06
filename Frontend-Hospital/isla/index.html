@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Isla - Panel Administrativo</title>
     <style>
         * {
@@ -410,7 +411,6 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Isla</th>
-                            <th>Camas</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -554,485 +554,316 @@
         </div>
     </div>
     
-    <div class="modal" id="qrModal">
-        <div class="modal-content">
-            <h3>Código QR para Cama <span id="qrBedNumber"></span></h3>
-            <div class="qr-display" style="border: none; padding: 0;">
-                <p>Simulación del Código QR que el paciente escanearía:</p>
-                <div class="qr-code" id="actualBedQR" style="font-size: 24px;"></div>
-                <p style="margin-top: 15px; font-size: 14px; color: #555;">(En un entorno real, esto sería una imagen de código de barras)</p>
-            </div>
-            <div class="form-actions">
-                <button class="btn btn-primary" onclick="closeModal('qrModal')">Cerrar</button>
-            </div>
-        </div>
-    </div>
 
+
+   <!-- Modal QR -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">Código QR de la cama</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+          <img id="qrImage" src="" alt="QR" class="img-fluid"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // --- INICIALIZACIÓN Y CONFIGURACIÓN ---
-        window.addEventListener('DOMContentLoaded', () => {
-            initializeData();
-            renderAll();
-            startAutoRefresh();
-        });
+    // --- INICIALIZACIÓN Y CONFIGURACIÓN ---
+    window.addEventListener('DOMContentLoaded', () => {
+        initializeData();
+        renderAll();
+        startAutoRefresh();
+    });
 
-        function initializeData() {
-            // Datos de inicialización, solo se crean si no existen en localStorage
-            if (!localStorage.getItem('hospital_islands')) {
-                const islands = [
-                    { id: 'ISL-1', name: 'Isla Norte', location: 'Piso 2 - Ala Este' },
-                    { id: 'ISL-2', name: 'Isla Sur', location: 'Piso 2 - Ala Oeste' }
-                ];
-                localStorage.setItem('hospital_islands', JSON.stringify(islands));
-            }
-
-            if (!localStorage.getItem('hospital_nurses')) {
-                const nurses = [
-                    { id: 'N1', name: 'Enfermera Ana', island: 'ISL-1', email: 'ana@hospital.com', pass: '1234' },
-                    { id: 'N2', name: 'Enfermero Juan', island: 'ISL-2', email: 'juan@hospital.com', pass: '4321' }
-                ];
-                localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
-            }
-
-            if (!localStorage.getItem('hospital_beds')) {
-                const beds = [
-                    { id: 'B1', number: 'C101', patient: 'Pedro Reyes', nurse: 'N1', island: 'ISL-1', status: 'attention', notes: 'Hipertensión', ailments: 'Dieta baja en sodio' },
-                    { id: 'B2', number: 'C102', patient: 'Maria López', nurse: 'N1', island: 'ISL-1', status: 'ok', notes: 'Post-operatorio', ailments: 'Cambio de vendaje a las 14:00' },
-                    { id: 'B3', number: 'C201', patient: 'Jorge Gil', nurse: 'N2', island: 'ISL-2', status: 'ok', notes: 'Estable', ailments: 'Ninguno' }
-                ];
-                localStorage.setItem('hospital_beds', JSON.stringify(beds));
-            }
-
-            if (!localStorage.getItem('hospital_notifications')) {
-                const notifications = [
-                    { id: Date.now(), bedId: 'B1', bedNumber: 'C101', patientName: 'Pedro Reyes', type: 'call', timestamp: new Date().toISOString(), status: 'pending' }
-                ];
-                localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
-            }
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            
-            document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
-            event.target.closest('a').classList.add('active');
-        }
-
-        function openModal(modalId) {
-            populateSelects();
-            document.getElementById(modalId).classList.add('active');
-            // Si es el modal de añadir cama, actualiza el QR inicial
-            if (modalId === 'addBedModal') {
-                document.getElementById('bedQRCode').textContent = 'BED-XXX';
-                document.getElementById('bedNumber').value = '';
-                document.getElementById('bedNumber').focus();
-            }
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            clearForms();
-        }
-
-        function clearForms() {
-            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
-            document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-        }
-
-        function renderAll() {
-            updateDashboard();
+    function renderAll() {
+        updateDashboard();
+        // Solo renderizamos camas si la sección 'beds' está activa,
+        // así evitamos llamadas innecesarias al backend al iniciar.
+        const activeSection = document.querySelector('.section.active').id;
+        if (activeSection === 'beds') {
             renderBeds();
-            renderNurses();
-            renderIslands();
-            renderNotifications();
-            populateSelects();
         }
-        
-        // --- FUNCIONES DE RENDERING ---
+        renderNurses();
+        renderIslands();
+        renderNotifications();
+        populateSelects();
+    }
 
-        function updateDashboard() {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            const notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            
-            document.getElementById('totalBeds').textContent = beds.length;
-            document.getElementById('totalNurses').textContent = nurses.length;
-            document.getElementById('totalIslands').textContent = islands.length;
-            document.getElementById('activeRequests').textContent = notifications.filter(n => n.status === 'pending' || n.status === 'in_process').length;
+    // --- RENDER CAMAS (corregido) ---
+    let isFetchingBeds = false; // evita llamadas concurrentes
 
-            const tbody = document.getElementById('recentRequests');
-            const recent = notifications.slice().reverse().slice(0, 5); // Últimas 5 notificaciones
-            
-            if (recent.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay solicitudes</td></tr>';
-            } else {
-                tbody.innerHTML = recent.map(n => {
-                    let badgeClass = n.status === 'pending' ? 'warning' : (n.status === 'in_process' ? 'info' : 'success');
-                    let badgeText = n.status === 'pending' ? 'Pendiente' : (n.status === 'in_process' ? 'En Proceso' : 'Atendida');
-                    return `
-                        <tr>
-                            <td>${new Date(n.timestamp).toLocaleTimeString()}</td>
-                            <td>Cama ${n.bedNumber}</td>
-                            <td>${n.patientName}</td>
-                            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                        </tr>
-                    `;
-                }).join('');
+    async function renderBeds() {
+        // Si ya hay una petición en curso, no lanzamos otra
+        if (isFetchingBeds) return;
+        isFetchingBeds = true;
+
+        const token = localStorage.getItem('authToken');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/pc/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            // Si no existe el elemento en el DOM, salimos (evita null)
+            const tbody = document.getElementById("bedsTable");
+            if (!tbody) {
+                console.warn("Elemento #bedsTable no encontrado en el DOM. Abortando renderBeds.");
+                return;
             }
-        }
 
-        function renderBeds() {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            
-            const tbody = document.getElementById('bedsTable');
-            
-            if (beds.length === 0) {
+            // Manejo de respuesta y parseo seguro
+            let json;
+            try {
+                const text = await response.text();
+                json = text ? JSON.parse(text) : null;
+            } catch (err) {
+                console.error("No se pudo parsear JSON de /api/pc/:", err);
+                json = null;
+            }
+
+            if (!response.ok) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error al cargar las camas',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#323232',
+                    color: '#fff'
+                });
+                // Si hay data de error en JSON, mostrar consola
+                console.error("Error response /api/pc/:", response.status, json);
+                // limpiar tabla o dejar estado vacío
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error al cargar las camas</td></tr>';
+                return;
+            }
+
+            // Validar estructura: esperas { data: [...] }
+            const items = (json && json.data) ? json.data : [];
+
+            if (!items || items.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay camas registradas</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = beds.map(bed => {
-                const nurse = nurses.find(n => n.id === bed.nurse);
-                const island = islands.find(i => i.id === bed.island);
-                return `
-                    <tr>
-                        <td><strong>${bed.number}</strong></td>
-                        <td>${bed.patient}</td>
-                        <td>${island ? island.name : '-'}</td>
-                        <td>${nurse ? nurse.name : 'Sin asignar'}</td>
-                        <td><span class="badge ${bed.status === 'ok' ? 'success' : 'warning'}">${bed.status === 'ok' ? 'Normal' : 'Atención'}</span></td>
-                        <td>
-                            <button class="btn btn-primary" onclick="showBedQR('${bed.id}')" style="margin-right: 5px; padding: 5px 10px;">Ver QR</button>
-                            <button class="btn btn-danger" onclick="deleteBed('${bed.id}')" style="padding: 5px 10px;">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
+            tbody.innerHTML = items.map(item => {
+    const paciente = item.paciente || {};
+    const cama = item.cama || {};
+    const isla = cama.islaBean || {};
 
-        function renderNurses() {
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            
-            const tbody = document.getElementById('nursesTable');
-            
-            if (nurses.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay enfermeros registrados</td></tr>';
-                return;
+    return `
+        <tr>
+            <!-- Número de cama -->
+            <td><strong>${cama.cama ?? '-'}</strong></td>
+
+            <!-- Paciente -->
+            <td>
+                <div><strong>${paciente.nombre ?? ''} ${paciente.paterno ?? ''} ${paciente.materno ?? ''}</strong></div>
+                <small>CURP: ${paciente.curp ?? '-'}</small><br>
+                <small><strong>Padecimientos:</strong> ${paciente.padecimientos ?? 'N/A'}</small>
+            </td>
+
+            <!-- Isla -->
+            <td>
+                <div><strong>Isla ${isla.numero ?? '-'}</strong></div>
+                <small>Usuario: ${isla.usuario ?? '-'}</small>
+            </td>
+
+            <!-- Enfermero (NO VIENE EN JSON) -->
+            <td>
+                <small>No asignado</small>
+            </td>
+
+            <!-- Estado -->
+            <td>
+                <span class="badge ${paciente.alta ? 'warning' : 'success'}">
+                    ${paciente.alta ? 'Alta' : 'En estancia'}
+                </span>
+            </td>
+
+            <!-- Acciones -->
+            <td>
+                <button class="btn btn-primary" onclick="showBedQR('${cama.id}')">Ver QR</button>
+                <button class="btn btn-danger" onclick="deleteBed('${item.id ?? ''}')">🗑️</button>
+            </td>
+        </tr>
+    `;
+}).join('');
+        } catch (error) {
+            console.error("Error en renderBeds():", error);
+        } finally {
+            // liberar el lock siempre, aunque falle
+            isFetchingBeds = false;
+        }
+    }
+
+    async function renderNurses() {
+    const token = localStorage.getItem('authToken');
+    const tbody = document.getElementById("nursesTable");
+
+    try {
+        const response = await fetch('http://localhost:8080/api/enfermero/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             }
-
-            tbody.innerHTML = nurses.map(nurse => {
-                const island = islands.find(i => i.id === nurse.island);
-                const assignedBeds = beds.filter(b => b.nurse === nurse.id).length;
-                return `
-                    <tr>
-                        <td><strong>${nurse.name}</strong></td>
-                        <td>${island ? island.name : '-'}</td>
-                        <td>${assignedBeds} camas</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="deleteNurse('${nurse.id}')" style="padding: 5px 10px;">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderIslands() {
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            
-            const tbody = document.getElementById('islandsTable');
-            
-            if (islands.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No hay islas registradas</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = islands.map(island => {
-                const islandNurses = nurses.filter(n => n.island === island.id).length;
-                const islandBeds = beds.filter(b => b.island === island.id).length;
-                return `
-                    <tr>
-                        <td><strong>${island.name}</strong></td>
-                        <td>${island.location}</td>
-                        <td>${islandNurses}</td>
-                        <td>${islandBeds}</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="deleteIsland('${island.id}')" style="padding: 5px 10px;">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderNotifications() {
-            const notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            const tbody = document.getElementById('notificationsTable');
-            
-            if (notifications.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay notificaciones</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = notifications.slice().reverse().map(n => {
-                 let badgeClass = n.status === 'pending' ? 'warning' : (n.status === 'in_process' ? 'info' : 'success');
-                 let badgeText = n.status === 'pending' ? 'Pendiente' : (n.status === 'in_process' ? 'En Proceso' : 'Atendida');
-                return `
-                    <tr>
-                        <td>${new Date(n.timestamp).toLocaleString()}</td>
-                        <td>Cama ${n.bedNumber}</td>
-                        <td>${n.patientName}</td>
-                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function populateSelects() {
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-
-            // Popula los selects de Isla
-            ['bedIsland', 'nurseIsland'].forEach(id => {
-                const select = document.getElementById(id);
-                select.innerHTML = '<option value="">Seleccionar...</option>' +
-                    islands.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
-            });
-
-            // Popula los selects de Asignaciones
-            const assignNurse = document.getElementById('assignNurse');
-            assignNurse.innerHTML = '<option value="">Seleccionar...</option>' +
-                nurses.map(n => `<option value="${n.id}">${n.name} (${n.island})</option>`).join('');
-
-            const assignBed = document.getElementById('assignBed');
-            // Solo camas sin enfermero asignado
-            assignBed.innerHTML = '<option value="">Seleccionar...</option>' +
-                beds.filter(b => !b.nurse).map(b => `<option value="${b.id}">Cama ${b.number} - ${b.patient}</option>`).join('');
-        }
-        
-        // --- GESTIÓN DE DATOS (CRUD) ---
-
-        // QR Dinámico en Modal de Añadir Cama
-        document.getElementById('bedNumber').addEventListener('input', function() {
-            document.getElementById('bedQRCode').textContent = this.value.trim().toUpperCase() ? `BED-${this.value.trim().toUpperCase()}` : 'BED-XXX';
         });
 
-        function saveBed() {
-            const number = document.getElementById('bedNumber').value.trim().toUpperCase();
-            const patient = document.getElementById('patientName').value.trim();
-            const island = document.getElementById('bedIsland').value;
-            const notes = document.getElementById('patientNotes').value.trim();
+        // Leer texto primero y parsear manualmente
+        const text = await response.text();
+        let json = text ? JSON.parse(text) : null;
 
-            if (!number || !patient || !island) {
-                alert('Completa todos los campos obligatorios');
-                return;
-            }
-            
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            
-            // Verificar ID duplicado (para el propósito del ejercicio, usamos el número de cama)
-            if (beds.some(b => b.number === number)) {
-                 alert('⚠️ Ya existe una cama con ese número. Usa otro.');
-                 return;
-            }
-            
-            const newBed = {
-                id: `B-${Date.now()}`, // ID único real
-                number,
-                patient,
-                island,
-                nurse: null,
-                notes,
-                status: 'ok'
-            };
-
-            beds.push(newBed);
-            localStorage.setItem('hospital_beds', JSON.stringify(beds));
-            
-            closeModal('addBedModal');
-            renderAll();
-            alert('✅ Cama creada correctamente');
-        }
-        
-        function deleteBed(bedId) {
-            if (!confirm('¿Estás seguro de que quieres eliminar esta cama? Se eliminarán también las notificaciones asociadas.')) return;
-            
-            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            beds = beds.filter(b => b.id !== bedId);
-            localStorage.setItem('hospital_beds', JSON.stringify(beds));
-            
-            let notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            notifications = notifications.filter(n => n.bedId !== bedId);
-            localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
-            
-            renderAll();
-            alert('🗑️ Cama y notificaciones asociadas eliminadas.');
+        if (!response.ok || !json) {
+            tbody.innerHTML = `
+                <tr><td colspan="4" class="empty-state">Error al cargar enfermeros</td></tr>
+            `;
+            return;
         }
 
-        function showBedQR(bedId) {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const bed = beds.find(b => b.id === bedId);
-            
-            if (bed) {
-                document.getElementById('qrBedNumber').textContent = bed.number;
-                // El contenido del QR simulado es el número de cama.
-                document.getElementById('actualBedQR').textContent = bed.number; 
-                openModal('qrModal');
-            } else {
-                alert('Cama no encontrada');
-            }
+        const items = json.data || [];
+
+        if (items.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="4" class="empty-state">No hay enfermeros registrados</td></tr>
+            `;
+            return;
         }
 
-        function saveNurse() {
-            const name = document.getElementById('nurseName').value.trim();
-            const island = document.getElementById('nurseIsland').value;
-            const email = document.getElementById('nurseEmail').value.trim();
+        tbody.innerHTML = items.map(item => {
+            const nombreCompleto =
+                `${item.nombre || ''} ${item.paterno || ''} ${item.materno || ''}`.trim();
 
-            if (!name || !island) {
-                alert('Completa todos los campos obligatorios');
-                return;
-            }
+            const isla = item.isla || {};
+            const islaNumero = isla.numero ?? '-';
 
-            const nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            const newNurse = {
-                id: `N${nurses.length + 1}`, // ID simple secuencial para la simulación
-                name,
-                island,
-                email,
-                pass: '1234', // Contraseña por defecto para simulación
-                status: 'active'
-            };
+            const camas = isla.camaBeans ? isla.camaBeans.length : 0;
 
-            nurses.push(newNurse);
-            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
-            
-            closeModal('addNurseModal');
-            renderAll();
-            alert('✅ Enfermero creado correctamente');
-        }
-        
-        function deleteNurse(nurseId) {
-            if (!confirm('¿Estás seguro de que quieres eliminar a este enfermero? Las camas asignadas quedarán sin enfermero.')) return;
-            
-            let nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            nurses = nurses.filter(n => n.id !== nurseId);
-            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
-            
-            // Desasignar camas
-            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            beds.forEach(b => {
-                if (b.nurse === nurseId) {
-                    b.nurse = null;
-                }
-            });
-            localStorage.setItem('hospital_beds', JSON.stringify(beds));
+            return `
+                <tr>
+                    <td><strong>${nombreCompleto}</strong></td>
+                    <td>${camas}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteNurse(${item.id})">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
-            renderAll();
-            alert('🗑️ Enfermero eliminado y camas reasignadas.');
+    } catch (error) {
+        console.error("Error en renderNurses():", error);
+        tbody.innerHTML = `
+            <tr><td colspan="4" class="empty-state">No se pudieron cargar los enfermeros</td></tr>
+        `;
+    }
+}
+
+async function showBedQR(id) {
+    try {
+        // Llamada al servicio que retorna el QR como imagen
+        const response = await fetch(`http://localhost:8080/api/qr/image/${id}`);
+
+        if (!response.ok) {
+            throw new Error("Error al obtener el QR");
         }
 
-        function saveIsland() {
-            const name = document.getElementById('islandName').value.trim();
-            const location = document.getElementById('islandLocation').value.trim();
+        // Convertir la respuesta a Blob (imagen binaria)
+        const blob = await response.blob();
 
-            if (!name || !location) {
-                alert('Completa todos los campos');
-                return;
+        // Crear URL temporal para la imagen
+        const imageUrl = URL.createObjectURL(blob);
+
+        // Insertar la imagen en el modal
+        const qrImg = document.getElementById("qrImage");
+        qrImg.src = imageUrl;
+
+        // Abrir modal
+        const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+        modal.show();
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo cargar el QR de la cama.",
+        });
+    }
+}
+
+
+
+    // --- START AUTO REFRESH (sin llamadas redundantes) ---
+    function startAutoRefresh() {
+        // Refresca la vista cada 5 segundos para actualizar las estadísticas y notificaciones
+        setInterval(() => {
+            const activeSection = document.querySelector('.section.active').id;
+
+            // Solo renderizamos lo necesario
+            if (activeSection === 'dashboard' || activeSection === 'notifications') {
+                updateDashboard();
+                renderNotifications();
             }
 
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            const newIsland = {
-                id: `ISL-${islands.length + 1}`, // ID simple secuencial para la simulación
-                name,
-                location
-            };
-
-            islands.push(newIsland);
-            localStorage.setItem('hospital_islands', JSON.stringify(islands));
-            
-            closeModal('addIslandModal');
-            renderAll();
-            alert('✅ Isla creada correctamente');
-        }
-        
-        function deleteIsland(islandId) {
-            if (!confirm('¿Estás seguro de que quieres eliminar esta Isla? Se eliminarán todas las camas y enfermeros de esta Isla.')) return;
-            
-            let islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            islands = islands.filter(i => i.id !== islandId);
-            localStorage.setItem('hospital_islands', JSON.stringify(islands));
-
-            let nurses = JSON.parse(localStorage.getItem('hospital_nurses') || '[]');
-            nurses = nurses.filter(n => n.island !== islandId);
-            localStorage.setItem('hospital_nurses', JSON.stringify(nurses));
-            
-            let beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            beds = beds.filter(b => b.island !== islandId);
-            localStorage.setItem('hospital_beds', JSON.stringify(beds));
-            
-            let notifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            const bedsToDelete = beds.map(b => b.id);
-            notifications = notifications.filter(n => !bedsToDelete.includes(n.bedId));
-            localStorage.setItem('hospital_notifications', JSON.stringify(notifications));
-
-            renderAll();
-            alert('🗑️ Isla, camas y enfermeros asociados eliminados.');
-        }
-
-        function createAssignment() {
-            const nurseId = document.getElementById('assignNurse').value;
-            const bedId = document.getElementById('assignBed').value;
-
-            if (!nurseId || !bedId) {
-                alert('Selecciona enfermero y cama');
-                return;
+            // Si la sección de camas está activa, actualizamos su tabla
+            if (activeSection === 'beds') {
+                renderBeds();
+                populateSelects(); // puede ser útil
             }
 
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const bedIndex = beds.findIndex(b => b.id === bedId);
-            
-            if (bedIndex !== -1) {
-                beds[bedIndex].nurse = nurseId;
-                localStorage.setItem('hospital_beds', JSON.stringify(beds));
-                renderAll();
-                document.getElementById('assignNurse').value = '';
-                document.getElementById('assignBed').value = '';
-                alert('✅ Asignación creada con éxito.');
-            } else {
-                alert('Error: Cama no encontrada.');
-            }
-        }
-        
-        // --- REFRESCAMIENTO AUTOMÁTICO ---
-        
-        function startAutoRefresh() {
-            // Refresca la vista cada 5 segundos para actualizar las estadísticas y notificaciones
-            setInterval(() => {
-                const activeSection = document.querySelector('.section.active').id;
-                
-                // Solo renderizamos lo necesario, o todo si estamos en el dashboard
-                if (activeSection === 'dashboard' || activeSection === 'notifications') {
-                    updateDashboard();
-                    renderNotifications();
-                }
-                
-                // Si la sección de camas está activa, actualizamos su tabla
-                if (activeSection === 'beds') {
-                    renderBeds();
-                    populateSelects(); // Puede que una cama haya sido desasignada por borrar a un enfermero
-                }
-                
-            }, 5000);
+        }, 5000);
+    }
+
+    // --- showSection ahora también llama a renderización puntual ---
+    function showSection(sectionId, event) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+
+        document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+        // cuando showSection se llama desde el onclick inline, event puede ser undefined.
+        if (event && event.target) {
+            event.target.closest('a').classList.add('active');
+        } else {
+            // fallback: activar el enlace por posición (no estrictamente necesario)
+            const links = Array.from(document.querySelectorAll('.sidebar nav a'));
+            const idx = ['dashboard','beds','nurses','assignments','islands','notifications'].indexOf(sectionId);
+            if (links[idx]) links[idx].classList.add('active');
         }
 
-    </script>
+        // Renderizar la sección recién activada (solo lo necesario)
+        if (sectionId === 'beds') {
+            renderBeds();
+            populateSelects();
+        } else if (sectionId === 'nurses') {
+            renderNurses();
+        } else if (sectionId === 'islands') {
+            renderIslands();
+        } else if (sectionId === 'notifications') {
+            renderNotifications();
+        } else if (sectionId === 'dashboard') {
+            updateDashboard();
+        }
+    }
+
+    // Asegúrate de reemplazar las otras definiciones de showSection en tu archivo por esta
+    // (Si tu HTML usa onclick="showSection('beds')", la llamada no envía event. Por eso el handler acepta fallback.)
+
+    // ... el resto de tus funciones permanece igual ...
+</script>
+
 </body>
 </html>

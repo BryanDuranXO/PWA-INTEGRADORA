@@ -1,8 +1,11 @@
 package mx.edu.utez.Back_Hospital.Service.Enfermero;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
+import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
+import mx.edu.utez.Back_Hospital.Model.Cama.DTO.DTOCamaSimple;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroRepository;
+import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_CamasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +27,28 @@ public class EnfermeroService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private Enfermeros_CamasRepository enfermerosCamasRepository;
+
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> getAll(){
         List<EnfermeroBean> enfermeros = enfermeroRepository.findAll();
 
         return new ResponseEntity<>(new ApiResponse(enfermeros, HttpStatus.OK, "Mostrando todos los enfermeros"), HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ApiResponse> getCamasAsignadas(Long idEnfermero) {
+        List<CamaBean> camas = enfermerosCamasRepository.findCamasByEnfermero(idEnfermero);
+
+        List<DTOCamaSimple> camasDTO = camas.stream()
+                .map(DTOCamaSimple::new)
+                .toList();
+
+        return new ResponseEntity<>(
+                new ApiResponse(camasDTO, HttpStatus.OK, "Camas asignadas al enfermero"),
+                HttpStatus.OK
+        );
     }
 
     @Transactional(rollbackFor = {SQLException.class})

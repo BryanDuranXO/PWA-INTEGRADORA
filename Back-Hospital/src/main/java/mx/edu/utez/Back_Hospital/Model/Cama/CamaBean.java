@@ -25,7 +25,7 @@ public class CamaBean {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_isla", nullable = false)
-    @JsonIgnore
+
     private IslaBean islaBean;
 
     @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)

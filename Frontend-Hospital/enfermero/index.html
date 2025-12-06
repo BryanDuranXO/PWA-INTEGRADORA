@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff; /* Fondo Blanco */
+            background: #ffffff;
+            /* Fondo Blanco */
             padding: 20px;
         }
 
@@ -24,12 +26,13 @@
 
         .header {
             /* Diseño profesional con color primario sólido */
-            background: #667eea; 
+            background: #667eea;
             color: white;
             padding: 25px;
-            border-radius: 10px; /* Bordes ligeramente más suaves */
+            border-radius: 10px;
+            /* Bordes ligeramente más suaves */
             margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .header h1 {
@@ -48,8 +51,9 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid #e9ecef; /* Borde sutil */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            /* Borde sutil */
         }
 
         .stat-card h3 {
@@ -65,16 +69,18 @@
             color: #667eea;
         }
 
-        .notifications, .assigned-beds {
+        .notifications,
+        .assigned-beds {
             background: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #e9ecef;
             margin-bottom: 25px;
         }
 
-        .notifications h2, .assigned-beds h2 {
+        .notifications h2,
+        .assigned-beds h2 {
             font-size: 20px;
             margin-bottom: 20px;
             color: #333;
@@ -89,16 +95,23 @@
             animation: slideIn 0.3s ease;
             position: relative;
         }
-        
+
         /* Estilo para En Proceso */
         .notification-item.in-process {
-            background: #e6f7ff; 
+            background: #e6f7ff;
             border-left-color: #007bff;
         }
 
         @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .notification-item .time {
@@ -131,7 +144,7 @@
 
         .bed-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-color: #667eea;
         }
 
@@ -171,9 +184,9 @@
             cursor: pointer;
             font-weight: bold;
             z-index: 10;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* Estilos del Modal */
         #patientModal {
             position: fixed;
@@ -181,39 +194,40 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 20;
         }
 
-        #patientModal > div {
+        #patientModal>div {
             background: white;
             padding: 30px;
             border-radius: 10px;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        
+
         #patientModal h3 {
             color: #667eea;
             margin-bottom: 15px;
         }
-        
+
         /* Estilos de mensaje QR */
         #qrSearchMessage.error-message {
             color: #dc3545;
             font-weight: bold;
         }
+
         #qrSearchMessage.success-message {
             color: #28a745;
             font-weight: bold;
         }
-        
     </style>
 </head>
+
 <body>
     <div id="mainSection">
         <button class="logout-btn" onclick="location.reload()">Cerrar</button>
@@ -226,9 +240,9 @@
         <div class="stats">
             <div class="stat-card">
                 <h3>Camas Asignadas</h3>
-                <div class="number" id="totalBeds">0</div>
+                <div class="number" id="totalBeds"></div>
             </div>
-        
+
             <div class="stat-card">
                 <h3>Atendidas Hoy</h3>
                 <div class="number" id="attendedToday">0</div>
@@ -237,11 +251,14 @@
 
         <div class="notifications" style="margin-bottom: 30px;">
             <h2>🔍 Consultar Información de Cama </h2>
-            <input type="text" id="bedIdSearch" placeholder="Ingresa ID de Cama (Ej: C101)" style="padding: 10px; width: 250px; border: 1px solid #ced4da; border-radius: 5px; margin-right: 10px;">
-            <button onclick="accessBedInfo()" style="padding: 10px 15px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Escanear QR / Ver Info</button>
+            <input type="text" id="bedIdSearch" placeholder="Ingresa ID de Cama (Ej: C101)"
+                style="padding: 10px; width: 250px; border: 1px solid #ced4da; border-radius: 5px; margin-right: 10px;">
+            <button onclick="accessBedInfo()"
+                style="padding: 10px 15px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Escanear
+                QR / Ver Info</button>
             <p id="qrSearchMessage" style="margin-top: 10px;"></p>
         </div>
-        
+
         <div class="notifications">
             <h2>🔔 Notificaciones</h2>
             <div id="notificationsList">
@@ -256,270 +273,99 @@
             <div class="beds-grid" id="bedsGrid"></div>
         </div>
     </div>
-    
+
     <div id="patientModal" style="display: none;">
         <div>
             <h3>Información del Paciente en Cama <span id="modalBedNumber"></span></h3>
             <p><strong>Nombre:</strong> <span id="modalPatientName"></span></p>
             <p><strong>Observaciones Generales:</strong> <span id="modalNotes"></span></p>
             <p><strong>Padecimientos / Notas Clínicas:</strong> <span id="modalAilments"></span></p>
-            <button onclick="closeModal()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px;">Cerrar</button>
+            <button onclick="closeModal()"
+                style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px;">Cerrar</button>
         </div>
     </div>
 
     <script>
-        // Simulamos que el enfermero N1 ya está activo
-        let currentNurse = { id: 'N1', name: 'Enfermera Ana', island: 'I1' }; 
-        let myNotifications = [];
-        let attendedToday = 0;
+
 
         // --- CÓDIGO DE INICIALIZACIÓN ---
         window.addEventListener('DOMContentLoaded', () => {
             initializeDummyData();
             showMainSection();
             startNotificationCheck();
+            getCamas();
         });
 
-        function initializeDummyData() {
-            // Datos de prueba mínimos para que la vista cargue
-            if (!localStorage.getItem('hospital_nurses')) {
-                localStorage.setItem('hospital_nurses', JSON.stringify([
-                    { id: 'N1', name: 'Enfermera Ana', island: 'I1', pass: '1234' },
-                    { id: 'N2', name: 'Enfermero Juan', island: 'I2', pass: '4321' }
-                ]));
+        async function getCamas() {
+    const token = localStorage.getItem('authToken');
+    const IdUser = localStorage.getItem('userId');
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/enfermero/camas/${IdUser}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
-            if (!localStorage.getItem('hospital_islands')) {
-                localStorage.setItem('hospital_islands', JSON.stringify([
-                    { id: 'I1', name: 'Isla Norte' },
-                    { id: 'I2', name: 'Isla Sur' }
-                ]));
-            }
-            if (!localStorage.getItem('hospital_beds')) {
-                localStorage.setItem('hospital_beds', JSON.stringify([
-                    { id: 'B1', number: 'C101', patient: 'Pedro Reyes', nurse: 'N1', island: 'I1', status: 'attention', notes: 'Hipertensión', ailments: 'Dieta baja en sodio' },
-                    { id: 'B2', number: 'C102', patient: 'Maria López', nurse: 'N1', island: 'I1', status: 'ok', notes: 'Post-operatorio', ailments: 'Cambio de vendaje a las 14:00' },
-                    { id: 'B3', number: 'C201', patient: 'Jorge Gil', nurse: 'N2', island: 'I2', status: 'ok', notes: 'Estable', ailments: 'Ninguno' }
-                ]));
-            }
-            if (!localStorage.getItem('hospital_notifications')) {
-                localStorage.setItem('hospital_notifications', JSON.stringify([
-                    { id: 1, bedId: 'B1', bedNumber: 'C101', patientName: 'Pedro Reyes', type: 'call', timestamp: new Date().toISOString(), status: 'pending' }
-                ]));
-            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Error al obtener las camas asignadas');
         }
-        
+
+        const camas = data.data;
+
+        // Contador superior
+        document.getElementById('totalBeds').innerText = camas.length;
+
+        // 📌 RENDERIZAR EN TARJETAS
+        renderBeds(camas);
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function renderBeds(camas) {
+    const bedsGrid = document.getElementById('bedsGrid');
+
+    bedsGrid.innerHTML = ""; // limpiar
+
+    if (camas.length === 0) {
+        bedsGrid.innerHTML = `
+            <div class="empty-state">
+                <p>No tienes camas asignadas</p>
+            </div>`;
+        return;
+    }
+
+    camas.forEach(c => {
+        const card = document.createElement('div');
+        card.classList.add('bed-card');
+
+        if (c.ocupada) {  
+            card.classList.add('needs-attention');
+        }
+
+        card.innerHTML = `
+            <div class="bed-num">Cama ${c.cama}</div>
+            <div class="patient-info">
+                <p><strong>ID:</strong> ${c.id}</p>
+                <p><strong>Estado:</strong> ${c.ocupada ? "Ocupada" : "Libre"}</p>
+            </div>
+        `;
+
+        bedsGrid.appendChild(card);
+    });
+}
+
+        getCamas();
         // --- FUNCIONES DE APOYO Y VISTA PRINCIPAL ---
-        
-        function getIslandName(islandId) {
-            const islands = JSON.parse(localStorage.getItem('hospital_islands') || '[]');
-            const island = islands.find(i => i.id === islandId);
-            return island ? island.name : 'Sin isla';
-        }
 
-        function showMainSection() {
-            document.getElementById('mainSection').style.display = 'block';
-            document.getElementById('nurseInfo').textContent = `${currentNurse.name} - ${getIslandName(currentNurse.island)}`;
-            
-            loadMyBeds();
-            loadNotifications();
-            updateStats();
-        }
 
-        function loadMyBeds() {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const myBeds = beds.filter(b => b.nurse === currentNurse.id);
-            
-            const grid = document.getElementById('bedsGrid');
-            grid.innerHTML = '';
-
-            if (myBeds.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><p>No tienes camas asignadas</p></div>';
-                return;
-            }
-
-            myBeds.forEach(bed => {
-                const card = document.createElement('div');
-                card.onclick = () => showPatientModal(bed.id); 
-                card.className = `bed-card ${bed.status === 'attention' ? 'needs-attention' : ''}`;
-                
-                card.innerHTML = `
-                    <div class="bed-num">🛏️ ${bed.number}</div>
-                    <div class="patient-info">
-                        <p><strong>Paciente:</strong> ${bed.patient || 'Vacante'}</p>
-                        <p><strong>Notas:</strong> ${bed.notes || 'Sin notas'}</p>
-                        <p><strong>Estado:</strong> ${bed.status === 'ok' ? '✅ Normal' : '⚠️ Requiere atención'}</p>
-                    </div>
-                `;
-                
-                grid.appendChild(card);
-            });
-        }
-        
-        // --- CONSULTA Y MODAL (SIMULACIÓN QR) ---
-
-        function showPatientModal(bedId) {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const bed = beds.find(b => b.id === bedId);
-
-            if (!bed || !bed.patient) {
-                alert('Cama vacía o información no disponible.');
-                return;
-            }
-
-            document.getElementById('modalBedNumber').textContent = bed.number;
-            document.getElementById('modalPatientName').textContent = bed.patient;
-            document.getElementById('modalNotes').textContent = bed.notes || 'N/A';
-            document.getElementById('modalAilments').textContent = bed.ailments || 'Ninguno registrado'; 
-
-            document.getElementById('patientModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('patientModal').style.display = 'none';
-        }
-        
-        function accessBedInfo() {
-            // El usuario ingresa el ID de la Cama, simulando la lectura del QR
-            const bedNumber = document.getElementById('bedIdSearch').value.trim().toUpperCase();
-            const message = document.getElementById('qrSearchMessage');
-            
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const bed = beds.find(b => b.number === bedNumber); 
-
-            message.textContent = '';
-            message.className = '';
-
-            if (bed) {
-                // Simulación de escaneo exitoso
-                message.textContent = `✅ QR de ${bed.number} escaneado. Cargando información...`;
-                message.className = 'success-message';
-                
-                // Abrir el modal con la información
-                showPatientModal(bed.id);
-                document.getElementById('bedIdSearch').value = ''; 
-            } else {
-                // Simulación de error de escaneo
-                message.textContent = `❌ Cama ${bedNumber} no encontrada. Verifica el QR.`;
-                message.className = 'error-message';
-            }
-        }
-
-        // --- NOTIFICACIONES Y ESTADOS ---
-
-        function loadNotifications() {
-            const allNotifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            
-            myNotifications = allNotifications.filter(notif => {
-                const bed = beds.find(b => b.id === notif.bedId);
-                return bed && bed.nurse === currentNurse.id && (notif.status === 'pending' || notif.status === 'in_process');
-            });
-
-            renderNotifications();
-        }
-
-        function renderNotifications() {
-            const list = document.getElementById('notificationsList');
-            
-            if (myNotifications.length === 0) {
-                list.innerHTML = '<div class="empty-state"><p>No hay solicitudes pendientes</p></div>';
-                return;
-            }
-
-            list.innerHTML = '';
-            myNotifications.forEach(notif => {
-                const item = document.createElement('div');
-                
-                let statusClass = notif.status === 'in_process' ? 'in-process' : '';
-                let statusText = notif.status === 'in_process' ? '⚙️ Solicitud EN PROCESO' : '🚨 SOLICITA AYUDA';
-                
-                const time = new Date(notif.timestamp);
-                const timeStr = time.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-                
-                item.className = `notification-item ${statusClass}`;
-                
-                item.innerHTML = `
-                    <div class="time">${timeStr}</div>
-                    <div class="bed-number">🛏️ Cama ${notif.bedNumber} - ${notif.patientName}</div>
-                    <div>${statusText}</div>
-                    <div style="margin-top: 10px;">
-                        <button style="padding: 8px 15px; margin-right: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;"
-                                onclick="updateNotificationStatus('${notif.id}', 'attended')">✅ Atendida</button>
-                        <button style="padding: 8px 15px; background: #ffc107; color: #333; border: none; border-radius: 5px; cursor: pointer;"
-                                onclick="updateNotificationStatus('${notif.id}', 'in_process')">⚙️ En Proceso</button>
-                    </div>
-                `;
-                
-                list.appendChild(item);
-            });
-        }
-        
-        function updateNotificationStatus(notifId, newStatus) {
-            const allNotifications = JSON.parse(localStorage.getItem('hospital_notifications') || '[]');
-            const notif = allNotifications.find(n => n.id == notifId);
-            
-            if (notif) {
-                notif.status = newStatus;
-                
-                const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-                const bed = beds.find(b => b.id === notif.bedId);
-                
-                if (newStatus === 'attended') {
-                    notif.attendedAt = new Date().toISOString();
-                    notif.attendedBy = currentNurse.id;
-                    
-                    if (bed) {
-                        bed.status = 'ok';
-                        localStorage.setItem('hospital_beds', JSON.stringify(beds));
-                    }
-                    
-                    attendedToday++; 
-                    
-                } 
-
-                localStorage.setItem('hospital_notifications', JSON.stringify(allNotifications));
-                
-                loadNotifications();
-                loadMyBeds();
-                updateStats();
-            }
-        }
-        
-        function updateStats() {
-            const beds = JSON.parse(localStorage.getItem('hospital_beds') || '[]');
-            const myBeds = beds.filter(b => b.nurse === currentNurse.id);
-            
-            document.getElementById('totalBeds').textContent = myBeds.length;
-            document.getElementById('pendingRequests').textContent = myNotifications.length;
-            document.getElementById('attendedToday').textContent = attendedToday;
-        }
-
-        function startNotificationCheck() {
-            // Verificar notificaciones cada 3 segundos
-            setInterval(() => {
-                if (currentNurse) {
-                    const oldCount = myNotifications.length;
-                    loadNotifications();
-                    updateStats();
-                    
-                    if (myNotifications.length > oldCount) {
-                        playNotificationSound();
-                    }
-                }
-            }, 3000);
-        }
-
-        function playNotificationSound() {
-            // Sonido de notificación en Base64
-            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS56+ilUhEHTJ7e8bllHAU2jNXy0n4qBSp+zPLaizsIHGS46+qkURAIUKXh8bxhGwU7k9by0H0pBSl+zPHbizsIHWS46+qkURAIUKXh8bxhGwU7k9by0H0pBSl+zPHbizsI');
-            audio.volume = 0.3;
-            audio.play().catch(() => {});
-        }
-
-        // Solicitar permiso de notificaciones al cargar
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
     </script>
 </body>
+
 </html>

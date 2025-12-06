@@ -26,6 +26,7 @@ public class IslaBean extends UsuarioBean {
     private Set<EnfermeroBean> enfermeroBeanSet ;
 
     @OneToMany(mappedBy = "islaBean", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<CamaBean> camaBeans ;
 
     public IslaBean(String numero, String token) {

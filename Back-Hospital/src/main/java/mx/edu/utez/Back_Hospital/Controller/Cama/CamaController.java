@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/cama")
+@RequestMapping("/api/cama")
 @CrossOrigin(origins = {"*"})
 public class CamaController {
     @Autowired
