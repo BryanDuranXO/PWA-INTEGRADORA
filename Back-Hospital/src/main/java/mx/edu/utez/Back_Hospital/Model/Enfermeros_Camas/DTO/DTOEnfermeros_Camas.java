@@ -18,7 +18,21 @@ public class DTOEnfermeros_Camas {
 
     private boolean activo = true;
 
-//    public Enfermeros_Camas toEntity(){
-//        return new Enfermeros_Camas(enfermero, cama, activo);
-//    }
+    public Enfermeros_Camas toEntity() {
+        Enfermeros_Camas ec = new Enfermeros_Camas();
+
+        // Crear objetos "fantasma" con solo el ID
+        EnfermeroBean enfermeroBean = new EnfermeroBean();
+        enfermeroBean.setId(this.enfermero);
+
+        CamaBean camaBean = new CamaBean();
+        camaBean.setId(this.cama);
+
+        ec.setEnfermero(enfermeroBean);
+        ec.setCama(camaBean);
+        ec.setActivo(this.activo);
+
+        return ec;
+    }
+
 }

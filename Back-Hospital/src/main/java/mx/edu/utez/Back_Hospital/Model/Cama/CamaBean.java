@@ -29,9 +29,11 @@ public class CamaBean {
     private IslaBean islaBean;
 
     @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)
+    @JsonIgnore
     private java.util.List<Enfermeros_Camas> asignacionesEnfermeros;
 
     @OneToMany(mappedBy = "cama", fetch = FetchType.LAZY)
+    @JsonIgnore
     private java.util.List<Pacientes_Camas> pacientesCamas;
 
     public CamaBean() {

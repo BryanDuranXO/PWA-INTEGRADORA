@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/EC")
+@RequestMapping("/api/e-c")
 @CrossOrigin(origins = {"*"})
 public class Enfermeros_CamasController {
 
@@ -32,7 +32,8 @@ public class Enfermeros_CamasController {
         return service.getAll();
     }
 
-    public ResponseEntity<ApiResponse> save(DTOEnfermeros_Camas dto){
+    @PostMapping("/new-ec")
+    public ResponseEntity<ApiResponse> save(@RequestBody DTOEnfermeros_Camas dto){
 
         CamaBean cama = camaRepository.findById(dto.getCama())
                 .orElse(null);
@@ -47,13 +48,10 @@ public class Enfermeros_CamasController {
             return new ResponseEntity<>(new ApiResponse(HttpStatus.CONFLICT, "Cama no encontrada", true), HttpStatus.CONFLICT);
         }
 
-        Enfermeros_Camas relacion = new Enfermeros_Camas();
-        relacion.setEnfermero(enfermero);
-        relacion.setCama(cama);
-        relacion.setActivo(dto.isActivo());
+
 
         return new ResponseEntity<>(new ApiResponse(
-                service.save(relacion),
+                service.save(dto.toEntity()),
                 HttpStatus.CREATED,
                 "Asignación creada")
                 , HttpStatus.CREATED);

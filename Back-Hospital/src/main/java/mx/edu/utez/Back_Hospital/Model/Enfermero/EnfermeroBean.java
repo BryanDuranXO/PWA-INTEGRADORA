@@ -1,5 +1,7 @@
 package mx.edu.utez.Back_Hospital.Model.Enfermero;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
@@ -18,9 +20,11 @@ public class EnfermeroBean extends UsuarioBean {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_isla", nullable = false)
+    @JsonManagedReference
     private IslaBean isla;
 
     @OneToMany(mappedBy = "enfermero", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Enfermeros_Camas> asignacionesCamas;
 
     public EnfermeroBean(String token, IslaBean isla, List<Enfermeros_Camas> asignacionesCamas) {

@@ -27,6 +27,7 @@ public class MainSecurity {
 
     private final String[] WHITE_LIST = {
             "/api/auth/**",
+            "/api/qr/**"
     };
 
     @Bean
@@ -61,8 +62,10 @@ public class MainSecurity {
                                 .requestMatchers("/api/paciente/save").hasAnyRole("ISLA")
                                 .requestMatchers("/api/cama/").hasAnyRole("ISLA")
                                 .requestMatchers("/api/cama/new-cama").hasAnyRole("ISLA")
-                                .requestMatchers("/api/EC/").hasAnyRole("ISLA")
-                                .requestMatchers("/api/EC/new-EC").hasAnyRole("ISLA")
+                                .requestMatchers("/api/e-c/").hasAnyRole("ISLA")
+                                .requestMatchers("/api/e-c/new-ec").hasAnyRole("ISLA")
+                                .requestMatchers("/api/pc/").hasAnyRole("ISLA")
+                                .requestMatchers("/api/pc/new-pc").hasAnyRole("ISLA")
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
