@@ -52,22 +52,6 @@ public class CamaBean {
         this.islaBean = islaBean;
     }
 
-    public CamaBean(Long id, int cama, boolean ocupada, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros, List<Pacientes_Camas> pacientesCamas) {
-        this.id = id;
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.islaBean = islaBean;
-        this.asignacionesEnfermeros = asignacionesEnfermeros;
-        this.pacientesCamas = pacientesCamas;
-    }
-
-    public CamaBean(int cama, boolean ocupada, IslaBean islaBean, List<Enfermeros_Camas> asignacionesEnfermeros, List<Pacientes_Camas> pacientesCamas) {
-        this.cama = cama;
-        this.ocupada = ocupada;
-        this.islaBean = islaBean;
-        this.asignacionesEnfermeros = asignacionesEnfermeros;
-        this.pacientesCamas = pacientesCamas;
-    }
 
     public Long getId() {
         return id;

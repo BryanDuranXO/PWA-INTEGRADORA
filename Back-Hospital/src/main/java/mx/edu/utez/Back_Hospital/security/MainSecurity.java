@@ -27,7 +27,13 @@ public class MainSecurity {
 
     private final String[] WHITE_LIST = {
             "/api/auth/**",
-            "/api/qr/**"
+            "/api/qr/**",
+            "/api/isla/patch-token",
+            "/api/paciente/patch-token",
+            "/api/enfermero/patch-token",
+            "/api/notifications/send",
+            "/api/alertas/solicitar",
+            "/api/isla/new-isla"
     };
 
     @Bean
@@ -59,15 +65,19 @@ public class MainSecurity {
                         req.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers("/api/enfermero/new-enfermero").hasAnyRole("ISLA")
                                 .requestMatchers("/api/isla/").hasAnyRole("ISLA")
-                                .requestMatchers("/api/isla/new-isla").permitAll()//hasRole("ISLA")
                                 .requestMatchers("/api/paciente/save").hasAnyRole("ISLA")
                                 .requestMatchers("/api/cama/").hasAnyRole("ISLA")
                                 .requestMatchers("/api/cama/new-cama").hasAnyRole("ISLA")
                                 .requestMatchers("/api/e-c/").hasAnyRole("ISLA")
                                 .requestMatchers("/api/e-c/new-ec").hasAnyRole("ISLA")
                                 .requestMatchers("/api/pc/").hasAnyRole("ISLA")
-                                .requestMatchers("/api/pc/new-pc").hasAnyRole("ISLA")
+                                .requestMatchers("/api/pc/new-pc").hasAnyRole("ISLA", "PACIENTE")
+                                .requestMatchers("/api/e-c/asignar").hasAnyRole("ISLA")
+                                .requestMatchers("/api/enfermero/isla/**").hasAnyRole("ISLA")
+                                .requestMatchers("/api/cama/disponibles/isla/**").hasAnyRole("ISLA")
                                 .requestMatchers("/api/enfermero/camas/**").hasAnyRole("ENFERMERO")
+                                .requestMatchers("/api/pc/find-pc/**").hasAnyRole("ISLA", "ENFERMERO")
+
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

@@ -15,4 +15,11 @@ public interface Enfermeros_CamasRepository extends JpaRepository<Enfermeros_Cam
     @Query("SELECT ec.cama FROM Enfermeros_Camas ec WHERE ec.enfermero.id = :idEnfermero AND ec.activo = true")
     List<CamaBean> findCamasByEnfermero(Long idEnfermero);
 
+    @Query("SELECT COUNT(ec) FROM Enfermeros_Camas ec WHERE ec.enfermero.id = :idEnfermero")
+    int countCamasAsignadas(Long idEnfermero);
+
+    Optional<Enfermeros_Camas> findByCamaIdAndActivoTrue(Long idCama);
+
+
+
 }

@@ -6,7 +6,6 @@ import mx.edu.utez.Back_Hospital.Model.Cama.CamaRepository;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroRepository;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.DTO.DTOEnfermeros_Camas;
-import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_Camas;
 import mx.edu.utez.Back_Hospital.Service.Enfermeros_Camas.Enfermeros_CamasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,5 +55,11 @@ public class Enfermeros_CamasController {
                 "Asignación creada")
                 , HttpStatus.CREATED);
     }
+
+    @PostMapping("/asignar")
+    public ResponseEntity<ApiResponse> asignarPorIsla(@RequestBody DTOEnfermeros_Camas dto) {
+        return service.asignarPorIsla(dto);
+    }
+
 
 }

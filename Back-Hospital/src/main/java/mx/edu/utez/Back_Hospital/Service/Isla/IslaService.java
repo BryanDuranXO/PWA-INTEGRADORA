@@ -42,5 +42,21 @@ public class IslaService {
         return new ResponseEntity<>(new ApiResponse(islaRepository.saveAndFlush(islaBean), HttpStatus.CREATED, "Isla creada exitosamente"), HttpStatus.CREATED);
     }
 
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<ApiResponse> tokenEnabled(Long id, String token){
+        Optional<IslaBean> islaOptional = islaRepository.findById(id);
+
+        if(islaOptional.isPresent()){
+         IslaBean isla = islaOptional.get();
+         isla.setToken(token);
+
+         islaRepository.save(isla);
+
+         return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "Token del dispositivo establecido", false), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "usuario no encontrado", true), HttpStatus.NOT_FOUND);
+
+    }
+
 
 }

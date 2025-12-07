@@ -1,6 +1,7 @@
 package mx.edu.utez.Back_Hospital.Service.Paciente;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
+import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,21 @@ public class PacienteService {
                     HttpStatus.CREATED
             );
         }
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<ApiResponse> tokenEnabled(Long id, String token){
+        Optional<PacienteBean> pacienteOptional =pacienteRepository.findById(id);
+
+        if(pacienteOptional.isPresent()){
+            PacienteBean paciente = pacienteOptional.get();
+            paciente.setToken(token);
+
+            pacienteRepository.save(paciente);
+
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "Token del dispositivo establecido", false), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "usuario no encontrado", true), HttpStatus.NOT_FOUND);
+
     }
 }

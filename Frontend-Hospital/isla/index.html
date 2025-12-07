@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="manifest" href="/manifest.webmanifest" />
+
     <title>Isla - Panel Administrativo</title>
     <style>
         * {
@@ -33,7 +36,7 @@
             font-size: 20px;
             margin-bottom: 30px;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .sidebar nav a {
@@ -50,7 +53,7 @@
 
         .sidebar nav a:hover,
         .sidebar nav a.active {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .sidebar nav a span {
@@ -69,7 +72,7 @@
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .header h2 {
@@ -96,7 +99,7 @@
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .stat-card .icon {
@@ -110,10 +113,21 @@
             margin-bottom: 15px;
         }
 
-        .stat-card .icon.blue { background: #e3f2fd; }
-        .stat-card .icon.green { background: #e8f5e9; }
-        .stat-card .icon.orange { background: #fff3e0; }
-        .stat-card .icon.red { background: #ffebee; }
+        .stat-card .icon.blue {
+            background: #e3f2fd;
+        }
+
+        .stat-card .icon.green {
+            background: #e8f5e9;
+        }
+
+        .stat-card .icon.orange {
+            background: #fff3e0;
+        }
+
+        .stat-card .icon.red {
+            background: #ffebee;
+        }
 
         .stat-card h3 {
             font-size: 14px;
@@ -131,7 +145,7 @@
             background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 25px;
         }
 
@@ -217,7 +231,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -296,6 +310,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <h1>🏥 Panel Isla</h1>
@@ -330,7 +345,7 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="icon blue">🛏️</div>
-                    <h3>Total Camas</h3>
+                    <h3>Pacientes en camas</h3>
                     <div class="number" id="totalBeds">0</div>
                 </div>
                 <div class="stat-card">
@@ -364,7 +379,9 @@
                         </tr>
                     </thead>
                     <tbody id="recentRequests">
-                        <tr><td colspan="4" class="empty-state">No hay solicitudes</td></tr>
+                        <tr>
+                            <td colspan="4" class="empty-state">No hay solicitudes</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -372,13 +389,13 @@
 
         <section id="beds" class="section">
             <div class="header">
-                <h2>🛏️ Gestión de Camas</h2>
+                <h2>🛏️ Pacientes en Camas</h2>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <h3>Lista de Camas</h3>
-                    <button class="btn btn-primary" onclick="openModal('addBedModal')">➕ Nueva Cama</button>
+                    <button class="btn btn-primary" onclick="openNewBedModal()">➕ Nueva Cama</button>
                 </div>
                 <table class="table">
                     <thead>
@@ -428,13 +445,17 @@
                 <h3>Asignar Enfermero a Cama</h3>
                 <div class="form-group">
                     <label>Enfermero</label>
-                    <select id="assignNurse"></select>
+                    <select id="assignNurse">
+                        <option value="">Seleccione enfermero</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Cama</label>
-                    <select id="assignBed"></select>
+                    <select id="assignBed">
+                        <option value="">Seleccione cama</option>
+                    </select>
                 </div>
-                <button class="btn btn-primary" onclick="createAssignment()">Crear Asignación</button>
+                <button class="btn btn-primary" onclick="crearAsignacion()">Crear Asignación</button>
             </div>
         </section>
 
@@ -469,44 +490,38 @@
             </div>
 
             <div class="card">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Fecha/Hora</th>
-                            <th>Cama</th>
-                            <th>Paciente</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="notificationsTable"></tbody>
-                </table>
+                <h1>Notificaciones Push con Firebase (PWA)</h1>
+                <ol>
+                    <li>Da clic en <strong>Habilitar notificaciones</strong>.</li>
+                    <li>Copia el <strong>token</strong> para usarlo en Firebase Console.</li>
+                </ol>
+
+                <button id="btn-permission">Habilitar notificaciones</button>
+                <p><strong>Estado permiso:</strong> <span id="perm">desconocido</span></p>
+                <h3>Token (cópialo para pruebas):</h3>
+                <pre id="token">—</pre>
+
+                <h3>Mensajes en primer plano:</h3>
+                <pre id="log">—</pre>
             </div>
         </section>
     </div>
 
+    <!-- Modal Simplificado Nueva Cama -->
     <div class="modal" id="addBedModal">
         <div class="modal-content">
             <h3>➕ Nueva Cama</h3>
+
+            <!-- Número de Cama -->
             <div class="form-group">
                 <label>Número de Cama *</label>
                 <input type="text" id="bedNumber" placeholder="C101">
-            </div>
-            <div class="form-group">
-                <label>Nombre del Paciente *</label>
-                <input type="text" id="patientName" placeholder="Juan Pérez">
-            </div>
+            </div <!-- Selección de Isla -->
             <div class="form-group">
                 <label>Isla *</label>
                 <select id="bedIsland"></select>
             </div>
-            <div class="form-group">
-                <label>Notas del Paciente</label>
-                <textarea id="patientNotes" rows="3"></textarea>
-            </div>
-            <div class="qr-display">
-                <p>Código QR para vincular:</p>
-                <div class="qr-code" id="bedQRCode">BED-XXX</div>
-            </div>
+
             <div class="form-actions">
                 <button class="btn" onclick="closeModal('addBedModal')">Cancelar</button>
                 <button class="btn btn-primary" onclick="saveBed()">Guardar</button>
@@ -517,18 +532,36 @@
     <div class="modal" id="addNurseModal">
         <div class="modal-content">
             <h3>➕ Nuevo Enfermero</h3>
+
             <div class="form-group">
-                <label>Nombre Completo *</label>
-                <input type="text" id="nurseName" placeholder="María González">
+                <label>Nombre *</label>
+                <input type="text" id="nurseNombre" placeholder="Luis">
+            </div>
+            <div class="form-group">
+                <label>Apellido Paterno *</label>
+                <input type="text" id="nursePaterno" placeholder="Ramírez">
+            </div>
+            <div class="form-group">
+                <label>Apellido Materno *</label>
+                <input type="text" id="nurseMaterno" placeholder="Torres">
+            </div>
+            <div class="form-group">
+                <label>Teléfono *</label>
+                <input type="text" id="nurseTelefono" placeholder="7779876543">
+            </div>
+            <div class="form-group">
+                <label>Usuario *</label>
+                <input type="text" id="nurseUsuario" placeholder="lramirez">
+            </div>
+            <div class="form-group">
+                <label>Contraseña *</label>
+                <input type="password" id="nursePassword" placeholder="12345">
             </div>
             <div class="form-group">
                 <label>Isla *</label>
                 <select id="nurseIsland"></select>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="nurseEmail" placeholder="enfermero@hospital.com">
-            </div>
+
             <div class="form-actions">
                 <button class="btn" onclick="closeModal('addNurseModal')">Cancelar</button>
                 <button class="btn btn-primary" onclick="saveNurse()">Guardar</button>
@@ -536,136 +569,374 @@
         </div>
     </div>
 
+
+    <!-- Modal -->
     <div class="modal" id="addIslandModal">
         <div class="modal-content">
             <h3>➕ Nueva Isla</h3>
             <div class="form-group">
-                <label>Nombre *</label>
-                <input type="text" id="islandName" placeholder="Isla 1">
-            </div>
-            <div class="form-group">
-                <label>Ubicación *</label>
-                <input type="text" id="islandLocation" placeholder="Piso 2 - Ala Este">
-            </div>
-            <div class="form-actions">
-                <button class="btn" onclick="closeModal('addIslandModal')">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveIsland()">Guardar</button>
+
+                <div class="form-group">
+                    <label>Usuario *</label>
+                    <input type="text" id="islandUsuario" placeholder="isla1">
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="islandPassword" placeholder="12345">
+                </div>
+                <div class="form-group">
+                    <label>Número *</label>
+                    <input type="text" id="islandNumero" placeholder="1">
+                </div>
+                <div class="form-actions">
+                    <button class="btn" onclick="closeModal('addIslandModal')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="saveIsland()">Guardar</button>
+                </div>
             </div>
         </div>
-    </div>
-    
 
 
-   <!-- Modal QR -->
-<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="qrModalLabel">Código QR de la cama</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center">
-          <img id="qrImage" src="" alt="QR" class="img-fluid"/>
-      </div>
-    </div>
-  </div>
-</div>
+
+        <!-- Modal QR -->
+        <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="qrModalLabel">Código QR de la cama</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="qrImage" src="" alt="QR" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap JS -->
+<script type="module" src="/app.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-    // --- INICIALIZACIÓN Y CONFIGURACIÓN ---
-    window.addEventListener('DOMContentLoaded', () => {
-        initializeData();
-        renderAll();
-        startAutoRefresh();
-    });
-
-    function renderAll() {
-        updateDashboard();
-        // Solo renderizamos camas si la sección 'beds' está activa,
-        // así evitamos llamadas innecesarias al backend al iniciar.
-        const activeSection = document.querySelector('.section.active').id;
-        if (activeSection === 'beds') {
-            renderBeds();
-        }
-        renderNurses();
-        renderIslands();
-        renderNotifications();
-        populateSelects();
-    }
-
-    // --- RENDER CAMAS (corregido) ---
-    let isFetchingBeds = false; // evita llamadas concurrentes
-
-    async function renderBeds() {
-        // Si ya hay una petición en curso, no lanzamos otra
-        if (isFetchingBeds) return;
-        isFetchingBeds = true;
-
-        const token = localStorage.getItem('authToken');
-
-        try {
-            const response = await fetch('http://localhost:8080/api/pc/', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                }
+        <script>
+            // --- INICIALIZACIÓN Y CONFIGURACIÓN ---
+            window.addEventListener('DOMContentLoaded', () => {
+                initializeData();
+                renderAll();
+                startAutoRefresh();
             });
 
-            // Si no existe el elemento en el DOM, salimos (evita null)
-            const tbody = document.getElementById("bedsTable");
-            if (!tbody) {
-                console.warn("Elemento #bedsTable no encontrado en el DOM. Abortando renderBeds.");
-                return;
+             async function PatchToken() {
+
+                const fcmToken = localStorage.getItem('fcmToken');
+                const IdUser = localStorage.getItem('userId');
+
+                console.log("FCM TOKEN A PATCH", fcmToken);
+                console.log("ID USER A PATCH", IdUser);
+
+                const data = {
+                    id: IdUser,
+                    token: fcmToken
+                };
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/isla/patch-token',{
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+
+                    if(!response.ok) {
+                        console.error("Error al actualizar token FCM");
+                    } else {
+                        console.log("Token FCM actualizado correctamente");
+                    }
+                    
+                } catch (error) {
+                    console.error("Error en la petición PATCH token FCM:", error);
+                }
+
+
+
+                
             }
 
-            // Manejo de respuesta y parseo seguro
-            let json;
-            try {
-                const text = await response.text();
-                json = text ? JSON.parse(text) : null;
-            } catch (err) {
-                console.error("No se pudo parsear JSON de /api/pc/:", err);
-                json = null;
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (!modal) return;
+                modal.classList.add("active");
+
+                if (modalId === "addNurseModal") {
+                    // Cargar select de islas
+                    populateSelect(
+                        "nurseIsland",
+                        "http://localhost:8080/api/isla/",
+                        i => i.usuario || `Isla ${i.numero}`, // texto de opción
+                        "No hay islas disponibles"
+                    );
+
+                    // Si más selects (ej. roles), puedes agregarlos aquí:
+                    // populateSelect("roleSelect", "http://localhost:8080/api/roles", r => r.nombre, "No hay roles");
+                }
             }
 
-            if (!response.ok) {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Error al cargar las camas',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    background: '#323232',
-                    color: '#fff'
-                });
-                // Si hay data de error en JSON, mostrar consola
-                console.error("Error response /api/pc/:", response.status, json);
-                // limpiar tabla o dejar estado vacío
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error al cargar las camas</td></tr>';
-                return;
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.remove("active");
             }
 
-            // Validar estructura: esperas { data: [...] }
-            const items = (json && json.data) ? json.data : [];
+            async function populateSelect(selectId, url, labelFn, defaultText = "Selecciona") {
+                const token = localStorage.getItem("authToken");
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">Cargando...</option>`;
 
-            if (!items || items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay camas registradas</td></tr>';
-                return;
+                try {
+                    const resp = await fetch(url, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const json = await resp.json();
+                    const items = json.data || [];
+
+                    if (items.length > 0) {
+                        select.innerHTML = items.map(i => {
+                            const label = labelFn(i);
+                            return `<option value="${i.id}">${label}</option>`;
+                        }).join("");
+                    } else {
+                        select.innerHTML = `<option value="">${defaultText}</option>`;
+                    }
+                } catch (error) {
+                    console.error(`Error cargando ${selectId}:`, error);
+                    select.innerHTML = `<option value="">Error al cargar</option>`;
+                }
             }
 
-            tbody.innerHTML = items.map(item => {
-    const paciente = item.paciente || {};
-    const cama = item.cama || {};
-    const isla = cama.islaBean || {};
+            function openNewBedModal() {
+                document.getElementById("bedNumber").value = ""; // Limpiar input
+                populateIslandSelect("bedIsland"); // Cargar islas
+                openModal("addBedModal"); // Mostrar modal
+            }
 
-    return `
+            async function saveIsland() {
+                const data = {
+
+                    usuario: document.getElementById('islandUsuario').value,
+                    password: document.getElementById('islandPassword').value,
+                    idRol: 1,
+                    numero: document.getElementById('islandNumero').value,
+                    token: null,
+                    status: true
+                };
+
+                const token = localStorage.getItem('authToken');
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/isla/new-isla', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        alert('Isla creada correctamente');
+                        closeModal('addIslandModal');
+                        // Aquí podrías recargar la tabla de islas
+                        loadIslandsTable();
+                    } else {
+                        alert('Error al crear la isla');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error al conectar con el servidor');
+                }
+            }
+
+            async function populateIslandSelect(selectId) {
+                const token = localStorage.getItem("authToken");
+                const select = document.getElementById(selectId);
+                select.innerHTML = `<option value="">Cargando...</option>`;
+
+                try {
+                    const resp = await fetch("http://localhost:8080/api/isla/", {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    });
+                    const json = await resp.json();
+                    const islas = json.data || [];
+
+                    if (islas.length > 0) {
+                        select.innerHTML = islas.map(i => {
+                            // Mostrar usuario en vez de nombre
+                            const label = i.usuario || `Isla ${i.numero}`;
+                            const value = i.id;
+                            return `<option value="${value}">${label}</option>`;
+                        }).join("");
+                    } else {
+                        select.innerHTML = `<option value="">No hay islas disponibles</option>`;
+                    }
+                } catch (error) {
+                    console.error("Error cargando islas:", error);
+                    select.innerHTML = `<option value="">Error al cargar</option>`;
+                }
+            }
+
+
+            function renderAll() {
+                updateDashboard();
+                // Solo renderizamos camas si la sección 'beds' está activa,
+                // así evitamos llamadas innecesarias al backend al iniciar.
+                const activeSection = document.querySelector('.section.active').id;
+                if (activeSection === 'beds') {
+                    renderBeds();
+                }
+                renderNurses();
+                loadIslandsTable();
+                renderNotifications();
+                populateSelects();
+            }
+
+
+            async function saveNurse() {
+                const nombre = document.getElementById("nurseNombre").value.trim();
+                const paterno = document.getElementById("nursePaterno").value.trim();
+                const materno = document.getElementById("nurseMaterno").value.trim();
+                const telefono = document.getElementById("nurseTelefono").value.trim();
+                const usuario = document.getElementById("nurseUsuario").value.trim();
+                const password = document.getElementById("nursePassword").value.trim();
+                const islaId = document.getElementById("nurseIsland").value;
+
+                if (!nombre || !paterno || !telefono || !usuario || !password || !islaId) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Campos incompletos',
+                        text: 'Por favor, completa todos los campos obligatorios.',
+                    });
+                    return;
+                }
+
+                const token = localStorage.getItem("authToken");
+
+                const nurse = {
+                    nombre: nombre,
+                    paterno: paterno,
+                    materno: materno,
+                    telefono: telefono,
+                    usuario: usuario,
+                    password: password,
+                    idRol: 2,
+                    token: '',
+                    isla: {
+                        id: parseInt(islaId)
+                    }
+                };
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/enfermero/new-enfermero', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify(nurse)
+                    })
+
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Enfermero guardado',
+                            text: 'El enfermero ha sido registrado exitosamente.',
+                        });
+                        closeModal('addNurseModal');
+                        renderNurses();
+                        populateSelects();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo guardar el enfermero.',
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error guardando enfermero:", error);
+                }
+            }
+            // --- RENDER CAMAS (corregido) ---
+            let isFetchingBeds = false; // evita llamadas concurrentes
+
+            async function renderBeds() {
+                // Si ya hay una petición en curso, no lanzamos otra
+                if (isFetchingBeds) return;
+                isFetchingBeds = true;
+
+                const token = localStorage.getItem('authToken');
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/pc/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    });
+
+                    // Si no existe el elemento en el DOM, salimos (evita null)
+                    const tbody = document.getElementById("bedsTable");
+                    if (!tbody) {
+                        console.warn("Elemento #bedsTable no encontrado en el DOM. Abortando renderBeds.");
+                        return;
+                    }
+
+                    // Manejo de respuesta y parseo seguro
+                    let json;
+                    try {
+                        const text = await response.text();
+                        json = text ? JSON.parse(text) : null;
+                    } catch (err) {
+                        console.error("No se pudo parsear JSON de /api/pc/:", err);
+                        json = null;
+                    }
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Error al cargar las camas',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            background: '#323232',
+                            color: '#fff'
+                        });
+                        // Si hay data de error en JSON, mostrar consola
+                        console.error("Error response /api/pc/:", response.status, json);
+                        // limpiar tabla o dejar estado vacío
+                        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error al cargar las camas</td></tr>';
+                        return;
+                    }
+
+                    // Validar estructura: esperas { data: [...] }
+                    const items = (json && json.data) ? json.data : [];
+
+                    if (!items || items.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay camas registradas</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = items.map(item => {
+                        const paciente = item.paciente || {};
+                        const cama = item.cama || {};
+                        const isla = cama.islaBean || {};
+
+                        return `
         <tr>
             <!-- Número de cama -->
             <td><strong>${cama.cama ?? '-'}</strong></td>
@@ -702,58 +973,58 @@
             </td>
         </tr>
     `;
-}).join('');
-        } catch (error) {
-            console.error("Error en renderBeds():", error);
-        } finally {
-            // liberar el lock siempre, aunque falle
-            isFetchingBeds = false;
-        }
-    }
-
-    async function renderNurses() {
-    const token = localStorage.getItem('authToken');
-    const tbody = document.getElementById("nursesTable");
-
-    try {
-        const response = await fetch('http://localhost:8080/api/enfermero/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                    }).join('');
+                } catch (error) {
+                    console.error("Error en renderBeds():", error);
+                } finally {
+                    // liberar el lock siempre, aunque falle
+                    isFetchingBeds = false;
+                }
             }
-        });
 
-        // Leer texto primero y parsear manualmente
-        const text = await response.text();
-        let json = text ? JSON.parse(text) : null;
+            async function renderNurses() {
+                const token = localStorage.getItem('authToken');
+                const tbody = document.getElementById("nursesTable");
 
-        if (!response.ok || !json) {
-            tbody.innerHTML = `
+                try {
+                    const response = await fetch('http://localhost:8080/api/enfermero/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    });
+
+                    // Leer texto primero y parsear manualmente
+                    const text = await response.text();
+                    let json = text ? JSON.parse(text) : null;
+
+                    if (!response.ok || !json) {
+                        tbody.innerHTML = `
                 <tr><td colspan="4" class="empty-state">Error al cargar enfermeros</td></tr>
             `;
-            return;
-        }
+                        return;
+                    }
 
-        const items = json.data || [];
+                    const items = json.data || [];
 
-        if (items.length === 0) {
-            tbody.innerHTML = `
+                    if (items.length === 0) {
+                        tbody.innerHTML = `
                 <tr><td colspan="4" class="empty-state">No hay enfermeros registrados</td></tr>
             `;
-            return;
-        }
+                        return;
+                    }
 
-        tbody.innerHTML = items.map(item => {
-            const nombreCompleto =
-                `${item.nombre || ''} ${item.paterno || ''} ${item.materno || ''}`.trim();
+                    tbody.innerHTML = items.map(item => {
+                        const nombreCompleto =
+                            `${item.nombre || ''} ${item.paterno || ''} ${item.materno || ''}`.trim();
 
-            const isla = item.isla || {};
-            const islaNumero = isla.numero ?? '-';
+                        const isla = item.isla || {};
+                        const islaNumero = isla.numero ?? '-';
 
-            const camas = isla.camaBeans ? isla.camaBeans.length : 0;
+                        const camas = isla.camaBeans ? isla.camaBeans.length : 0;
 
-            return `
+                        return `
                 <tr>
                     <td><strong>${nombreCompleto}</strong></td>
                     <td>${camas}</td>
@@ -762,108 +1033,284 @@
                     </td>
                 </tr>
             `;
-        }).join('');
+                    }).join('');
 
-    } catch (error) {
-        console.error("Error en renderNurses():", error);
-        tbody.innerHTML = `
+                } catch (error) {
+                    console.error("Error en renderNurses():", error);
+                    tbody.innerHTML = `
             <tr><td colspan="4" class="empty-state">No se pudieron cargar los enfermeros</td></tr>
         `;
-    }
-}
-
-async function showBedQR(id) {
-    try {
-        // Llamada al servicio que retorna el QR como imagen
-        const response = await fetch(`http://localhost:8080/api/qr/image/${id}`);
-
-        if (!response.ok) {
-            throw new Error("Error al obtener el QR");
-        }
-
-        // Convertir la respuesta a Blob (imagen binaria)
-        const blob = await response.blob();
-
-        // Crear URL temporal para la imagen
-        const imageUrl = URL.createObjectURL(blob);
-
-        // Insertar la imagen en el modal
-        const qrImg = document.getElementById("qrImage");
-        qrImg.src = imageUrl;
-
-        // Abrir modal
-        const modal = new bootstrap.Modal(document.getElementById('qrModal'));
-        modal.show();
-
-    } catch (error) {
-        console.error(error);
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudo cargar el QR de la cama.",
-        });
-    }
-}
-
-
-
-    // --- START AUTO REFRESH (sin llamadas redundantes) ---
-    function startAutoRefresh() {
-        // Refresca la vista cada 5 segundos para actualizar las estadísticas y notificaciones
-        setInterval(() => {
-            const activeSection = document.querySelector('.section.active').id;
-
-            // Solo renderizamos lo necesario
-            if (activeSection === 'dashboard' || activeSection === 'notifications') {
-                updateDashboard();
-                renderNotifications();
+                }
             }
 
-            // Si la sección de camas está activa, actualizamos su tabla
-            if (activeSection === 'beds') {
-                renderBeds();
-                populateSelects(); // puede ser útil
+            async function showBedQR(id) {
+                try {
+                    // Llamada al servicio que retorna el QR como imagen
+                    const response = await fetch(`http://localhost:8080/api/qr/image/${id}`);
+
+                    if (!response.ok) {
+                        throw new Error("Error al obtener el QR");
+                    }
+
+                    // Convertir la respuesta a Blob (imagen binaria)
+                    const blob = await response.blob();
+
+                    // Crear URL temporal para la imagen
+                    const imageUrl = URL.createObjectURL(blob);
+
+                    // Insertar la imagen en el modal
+                    const qrImg = document.getElementById("qrImage");
+                    qrImg.src = imageUrl;
+
+                    // Abrir modal
+                    const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se pudo cargar el QR de la cama.",
+                    });
+                }
             }
 
-        }, 5000);
-    }
 
-    // --- showSection ahora también llama a renderización puntual ---
-    function showSection(sectionId, event) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
 
-        document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
-        // cuando showSection se llama desde el onclick inline, event puede ser undefined.
-        if (event && event.target) {
-            event.target.closest('a').classList.add('active');
-        } else {
-            // fallback: activar el enlace por posición (no estrictamente necesario)
-            const links = Array.from(document.querySelectorAll('.sidebar nav a'));
-            const idx = ['dashboard','beds','nurses','assignments','islands','notifications'].indexOf(sectionId);
-            if (links[idx]) links[idx].classList.add('active');
-        }
+            // --- showSection ahora también llama a renderización puntual ---
+            function showSection(sectionId, event) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
 
-        // Renderizar la sección recién activada (solo lo necesario)
-        if (sectionId === 'beds') {
-            renderBeds();
-            populateSelects();
-        } else if (sectionId === 'nurses') {
-            renderNurses();
-        } else if (sectionId === 'islands') {
-            renderIslands();
-        } else if (sectionId === 'notifications') {
-            renderNotifications();
-        } else if (sectionId === 'dashboard') {
-            updateDashboard();
-        }
-    }
+                document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+                // cuando showSection se llama desde el onclick inline, event puede ser undefined.
+                if (event && event.target) {
+                    event.target.closest('a').classList.add('active');
+                } else {
+                    // fallback: activar el enlace por posición (no estrictamente necesario)
+                    const links = Array.from(document.querySelectorAll('.sidebar nav a'));
+                    const idx = ['dashboard', 'beds', 'nurses', 'assignments', 'islands', 'notifications'].indexOf(sectionId);
+                    if (links[idx]) links[idx].classList.add('active');
+                }
 
-    // Asegúrate de reemplazar las otras definiciones de showSection en tu archivo por esta
-    // (Si tu HTML usa onclick="showSection('beds')", la llamada no envía event. Por eso el handler acepta fallback.)
+                // Renderizar la sección recién activada (solo lo necesario)
+                if (sectionId === 'beds') {
+                    renderBeds();
+                    populateSelects();
+                } else if (sectionId === 'nurses') {
+                    renderNurses();
+                } else if (sectionId === 'islands') {
+                    loadIslandsTable();
+                } else if (sectionId === 'notifications') {
+                    renderNotifications();
+                } else if (sectionId === 'dashboard') {
+                    updateDashboard();
+                }
+                else if (sectionId === 'assignments') {
+                    populateSelects();  // 👈 NECESARIO
+                }
+            }
 
-    // ... el resto de tus funciones permanece igual ...
-</script>
+            async function populateSelects() {
+
+                const token = localStorage.getItem("authToken");
+                const idIsla = localStorage.getItem("userId"); // o 'idIsla' según tu lógica
+                if (!idIsla) {
+                    console.warn("No se encontró idIsla en localStorage");
+                    return;
+                }
+
+                const nurseSelect = document.getElementById("assignNurse");
+                const bedSelect = document.getElementById("assignBed");
+
+                nurseSelect.innerHTML = `<option>Cargando...</option>`;
+                bedSelect.innerHTML = `<option>Cargando...</option>`;
+
+                try {
+                    // 1️⃣ Enfermeros
+                    const enfermerosResp = await fetch(`http://localhost:8080/api/enfermero/isla/${idIsla}`, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    const enfermerosData = await enfermerosResp.json();
+                    const enfermeros = enfermerosData.data || [];
+
+                    nurseSelect.innerHTML = enfermeros.length
+                        ? enfermeros.map(e => `<option value="${e.id}">${e.nombre} ${e.paterno} ${e.materno}</option>`).join("")
+                        : `<option value="">No hay enfermeros disponibles</option>`;
+
+                    // 2️⃣ Camas disponibles
+                    const camasResp = await fetch(`http://localhost:8080/api/cama/disponibles/isla/${idIsla}`, {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    const camasData = await camasResp.json();
+                    const camas = camasData.data || [];
+
+                    bedSelect.innerHTML = camas.length
+                        ? camas.map(c => `<option value="${c.id}">Cama ${c.cama}</option>`).join("")
+                        : `<option value="">No hay camas disponibles</option>`;
+
+                } catch (error) {
+                    console.error("Error cargando selects:", error);
+                    nurseSelect.innerHTML = `<option value="">Error al cargar</option>`;
+                    bedSelect.innerHTML = `<option value="">Error al cargar</option>`;
+                }
+            }
+
+            // Llamar al cargar la página
+            window.addEventListener("DOMContentLoaded", populateSelects);
+
+            // Función para crear asignación (ejemplo)
+            window.addEventListener("DOMContentLoaded", populateSelects);
+
+            // Función para crear asignación
+            async function crearAsignacion() {
+                const enfermeroId = document.getElementById("assignNurse").value;
+                const camaId = document.getElementById("assignBed").value;
+
+                if (!enfermeroId || !camaId) {
+                    alert("Selecciona enfermero y cama");
+                    return;
+                }
+
+                const idIsla = localStorage.getItem("userId");
+                const token = localStorage.getItem("authToken");
+
+                const dto = {
+                    enfermero: Number(enfermeroId),
+                    cama: Number(camaId),
+                    idIsla: Number(idIsla),
+                    activo: true
+                };
+
+                try {
+                    const resp = await fetch(`http://localhost:8080/api/e-c/asignar`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(dto)
+                    });
+
+                    const data = await resp.json();
+
+                    if (resp.ok) {
+                        alert("✅ Cama asignada correctamente al enfermero");
+                        populateSelects(); // refrescar selects
+                    } else {
+                        alert(`❌ Error: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error("Error al crear asignación:", error);
+                    alert("❌ Error al asignar cama");
+                }
+            }
+
+            async function saveBed() {
+                const token = localStorage.getItem("authToken");
+                const numero = document.getElementById("bedNumber").value.trim();
+                const islaId = document.getElementById("bedIsland").value;
+
+                if (!numero || !islaId) {
+                    alert("Por favor, completa todos los campos obligatorios.");
+                    return;
+                }
+
+                const newBed = {
+                    cama: numero,
+                    ocupada: false,
+                    islaBean: {
+                        id: islaId
+                    }
+                };
+
+                try {
+                    const response = await fetch('http://localhost:8080/api/cama/new-cama', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify(newBed)
+                    })
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',   // esquina inferior derecha
+                            icon: 'error',
+                            title: 'Error al guardar la cama',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            background: '#323232',
+                            color: '#fff'
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',   // esquina inferior derecha
+                        icon: 'success',
+                        title: 'Cama guardada exitosamente',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#323232',
+                        color: '#fff'
+                    });
+                } catch (error) {
+                    console.error("Error al guardar la cama:", error);
+                }
+            }
+
+            async function loadIslandsTable() {
+                const token = localStorage.getItem("authToken");
+                const tableBody = document.getElementById("islandsTable");
+                tableBody.innerHTML = `<tr><td colspan="5">Cargando...</td></tr>`;
+
+                try {
+                    const resp = await fetch("http://localhost:8080/api/isla/", {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const json = await resp.json();
+                    const islas = json.data || [];
+
+                    if (islas.length === 0) {
+                        tableBody.innerHTML = `<tr><td colspan="5">No hay islas disponibles</td></tr>`;
+                        return;
+                    }
+
+                    tableBody.innerHTML = islas.map(isla => `
+            <tr>
+                <td>${isla.numero}</td>
+                <td>${isla.id}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editIsland(${isla.id})">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteIsland(${isla.id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join("");
+
+                } catch (error) {
+                    console.error("Error cargando islas:", error);
+                    tableBody.innerHTML = `<tr><td colspan="5">Error al cargar las islas</td></tr>`;
+                }
+            }
+            PatchToken();
+
+        </script>
 
 </body>
+
 </html>

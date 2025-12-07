@@ -15,6 +15,7 @@ public class DTOEnfermeros_Camas {
 
     private Long enfermero;
     private Long cama;
+    private Long idIsla; // <-- NUEVO
 
     private boolean activo = true;
 

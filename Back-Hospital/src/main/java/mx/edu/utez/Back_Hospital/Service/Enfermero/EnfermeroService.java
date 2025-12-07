@@ -6,6 +6,7 @@ import mx.edu.utez.Back_Hospital.Model.Cama.DTO.DTOCamaSimple;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroBean;
 import mx.edu.utez.Back_Hospital.Model.Enfermero.EnfermeroRepository;
 import mx.edu.utez.Back_Hospital.Model.Enfermeros_Camas.Enfermeros_CamasRepository;
+import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +63,21 @@ public class EnfermeroService {
         enfermeroBean.setPassword(passwordEncoder.encode(enfermeroBean.getPassword()));
 
         return new ResponseEntity<>(new ApiResponse(enfermeroRepository.saveAndFlush(enfermeroBean), HttpStatus.CREATED, "Enfermero registrado correctamente"), HttpStatus.CREATED);
+    }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<ApiResponse> tokenEnabled(Long id, String token){
+        Optional<EnfermeroBean> enfermeroOptional = enfermeroRepository.findById(id);
+
+        if(enfermeroOptional.isPresent()){
+            EnfermeroBean enfermero = enfermeroOptional.get();
+            enfermero.setToken(token);
+
+            enfermeroRepository.save(enfermero);
+
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "Token del dispositivo establecido", false), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "usuario no encontrado", true), HttpStatus.NOT_FOUND);
+
     }
 }

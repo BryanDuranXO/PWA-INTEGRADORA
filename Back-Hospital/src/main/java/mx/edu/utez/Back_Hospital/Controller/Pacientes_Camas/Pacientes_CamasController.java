@@ -24,4 +24,9 @@ public class Pacientes_CamasController {
     public ResponseEntity<ApiResponse> save(@RequestBody DTOPacientes_Camas dto){
         return service.save(dto.toEntity());
     }
+
+    @GetMapping("/find-pc/{id}")
+    public ResponseEntity<ApiResponse> getPacientes_Camas(@PathVariable Long id){
+        return service.getById(id);
+    }
 }

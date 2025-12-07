@@ -43,6 +43,9 @@ public class DTOIsla {
 
     private Set<CamaBean> camaBeans ;
 
+    public DTOIsla() {
+    }
+
     public IslaBean toEntity(RolBean rol) {
         IslaBean isla = new IslaBean();
 

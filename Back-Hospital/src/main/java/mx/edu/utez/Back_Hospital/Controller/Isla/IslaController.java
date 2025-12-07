@@ -2,6 +2,7 @@ package mx.edu.utez.Back_Hospital.Controller.Isla;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
 import mx.edu.utez.Back_Hospital.Model.Isla.DTO.DTOIsla;
+import mx.edu.utez.Back_Hospital.Model.Isla.DTO.DtoPatchToken;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Rol.RolBean;
 import mx.edu.utez.Back_Hospital.Model.Rol.RolRepository;
@@ -34,6 +35,11 @@ public class IslaController {
         IslaBean isla =dtoIsla.toEntity(rol);
 
         return service.save(isla);
+    }
+
+    @PatchMapping("/patch-token")
+    public ResponseEntity<ApiResponse> updateToken(@RequestBody DtoPatchToken dto) {
+        return service.tokenEnabled(dto.getId(), dto.getToken());
     }
 
 }

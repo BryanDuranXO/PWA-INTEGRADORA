@@ -14,20 +14,25 @@ public class DTOCama {
 
     private boolean ocupada;
 
-    private IslaBean islaBean;
-
     private DTOIsla isla;
 
-    public CamaBean toEntity(){
-        return new CamaBean(cama,ocupada,islaBean);
+    private Long islaId; // Para recibir el ID de la isla en POST
+
+    public DTOCama() {}
+
+    public CamaBean toEntity() {
+        IslaBean isla = new IslaBean();
+        isla.setId(islaId);
+        return new CamaBean(cama, ocupada, isla);
     }
 
     public DTOCama(CamaBean cama){
         this.id = cama.getId();
         this.cama = cama.getCama();
         this.ocupada = cama.isOcupada();
-        this.isla = new DTOIsla(cama.getIslaBean()); // ahora sí es correcto
+        this.isla = new DTOIsla(cama.getIslaBean());
     }
+
 
 
 }

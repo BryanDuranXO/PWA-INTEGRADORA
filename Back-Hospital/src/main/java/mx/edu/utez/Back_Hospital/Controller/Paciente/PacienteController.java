@@ -1,7 +1,9 @@
 package mx.edu.utez.Back_Hospital.Controller.Paciente;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
+import mx.edu.utez.Back_Hospital.Model.Isla.DTO.DtoPatchToken;
 import mx.edu.utez.Back_Hospital.Model.Paciente.DTO.DTOPaciente;
+import mx.edu.utez.Back_Hospital.Model.Paciente.DTO.DTOPaciente_PatchToken;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
 import mx.edu.utez.Back_Hospital.Model.Rol.RolBean;
@@ -41,6 +43,11 @@ public class PacienteController {
 
         // Llamar al servicio
         return pacienteService.addPaciente(paciente);
+    }
+
+    @PatchMapping("/patch-token")
+    public ResponseEntity<ApiResponse> updateToken(@RequestBody DTOPaciente_PatchToken dto) {
+        return pacienteService.tokenEnabled(dto.getId(), dto.getToken());
     }
 
 }

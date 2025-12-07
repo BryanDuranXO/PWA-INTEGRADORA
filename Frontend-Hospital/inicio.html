@@ -114,6 +114,7 @@
         }
     </style>
 </head>
+<link rel="manifest" href="manifest.webmanifest">
 
 <body>
     <div class="login-container">
@@ -135,11 +136,14 @@
 
         <p id="messageArea"></p>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+    <script type="module">
+        import { getFCMToken } from '/app.js';
+        
         const messageArea = document.getElementById('messageArea');
 
-        async function generalLogin() {
+        window.generalLogin = async function() {
             const userId = document.getElementById('userInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
 
@@ -161,10 +165,9 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-
                     Swal.fire({
                         toast: true,
-                        position: 'top-end',   // esquina inferior derecha
+                        position: 'top-end',
                         icon: 'error',
                         title: 'Usuario o contraseña incorrectos',
                         showConfirmButton: false,
@@ -173,54 +176,59 @@
                         background: '#323232',
                         color: '#fff'
                     });
-
+                    return;
                 }
 
                 console.log("data", data.data.token);
-                    // Guardar el token en el almacenamiento local
-                    localStorage.setItem('authToken', data.data.token);
-                    console.log("rol", data.data.roles[0])
-                    localStorage.setItem('userRole', data.data.roles[0]);
-                    const role = data.data.roles[0];
-                    localStorage.setItem("username", data.data.correo);
-                    console.log("user", data.data.correo)
-                    localStorage.setItem("userId", data.data.id);
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',   // esquina inferior derecha
-                        icon: 'success',
-                        title: 'Inicio de sesión exitoso',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        background: '#323232',
-                        color: '#fff'
-                    });
+                // Guardar el token de autenticación
+                localStorage.setItem('authToken', data.data.token);
+                localStorage.setItem('userRole', data.data.roles[0]);
+                console.log("userRole", data.data.roles[0]);
+                localStorage.setItem("username", data.data.correo);
+                localStorage.setItem("userId", data.data.id);
+                
+                // ✅ OBTENER Y GUARDAR TOKEN FCM
+                const fcmToken = await getFCMToken();
+                if (fcmToken) {
+                    console.log('Token FCM obtenido y guardado:', fcmToken);
+                    
+                    
+                }
+                
+                const role = data.data.roles[0];
+                
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Inicio de sesión exitoso',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#323232',
+                    color: '#fff'
+                });
 
-                    switch(role.authority){
-                        case 'ROLE_ISLA':
-                            window.location.href = './isla/index.html';
-                            break;
-                        case 'ROLE_ENFERMERO':
-                            window.location.href = './enfermero/index.html';
-                            break;
-                        case 'ROLE_PACIENTTE':
-                            window.location.href = './paciente/index.html';
-                            break;
-                        default:
-                            console.error('Rol de usuario no reconocido');
-                    }
+                switch(role.authority){
+                    case 'ROLE_ISLA':
+                        window.location.href = './isla/index.html';
+                        break;
+                    case 'ROLE_ENFERMERO':
+                        window.location.href = './enfermero/index.html';
+                        break;
+                    case 'ROLE_PACIENTE':
+                        window.location.href = './paciente/ayuda.html';
+                        break;
+                    default:
+                        console.error('Rol de usuario no reconocido');
+                }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
-                
             }
-
-
         }
 
-        // --- Lógica de Restablecimiento de Contraseña (Simulada) ---
-
-        function showRecoveryForm() {
+        // --- Funciones de recuperación de contraseña ---
+        window.showRecoveryForm = function() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('recoveryForm').style.display = 'block';
             document.getElementById('formTitle').textContent = 'Recuperar Contraseña';
@@ -228,14 +236,14 @@
             document.getElementById('recoveryIdInput').value = '';
         }
 
-        function showLoginForm() {
+        window.showLoginForm = function() {
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('recoveryForm').style.display = 'none';
             document.getElementById('formTitle').textContent = '🏥 Acceso al Sistema';
             messageArea.textContent = '';
         }
 
-        function recoverPassword() {
+        window.recoverPassword = function() {
             const recoveryId = document.getElementById('recoveryIdInput').value.trim();
             messageArea.textContent = '';
 
@@ -245,22 +253,12 @@
                 return;
             }
 
-            const user = USERS[recoveryId];
+            messageArea.className = 'success-message';
+            messageArea.textContent = `✅ Solicitud enviada para el usuario ${recoveryId}. Revisa tu correo electrónico.`;
 
-            if (user) {
-                // SIMULACIÓN: Notificamos el éxito y mostramos un mensaje.
-                messageArea.className = 'success-message';
-                messageArea.textContent = `✅ Solicitud enviada (simulada) para el usuario ${recoveryId}. Revisa tu correo electrónico.`;
-
-                // Volvemos automáticamente al login después de 3 segundos
-                setTimeout(() => {
-                    showLoginForm();
-                }, 3000);
-
-            } else {
-                messageArea.className = 'error-message';
-                messageArea.textContent = 'Error: ID de usuario no registrado en el sistema.';
-            }
+            setTimeout(() => {
+                window.showLoginForm();
+            }, 3000);
         }
     </script>
 </body>

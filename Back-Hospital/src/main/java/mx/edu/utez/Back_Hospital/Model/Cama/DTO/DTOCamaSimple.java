@@ -14,4 +14,6 @@ public class DTOCamaSimple {
         this.cama = cama.getCama();
         this.ocupada = cama.isOcupada();
     }
+
+
 }

@@ -52,4 +52,17 @@ public class Pacientes_CamasService {
 
         return new ResponseEntity<>(new ApiResponse(repository.saveAndFlush(pacientesCamas), HttpStatus.CREATED, "paciente asignado a cama correctamente"), HttpStatus.CREATED);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ApiResponse> getById(Long id){
+        Optional<Pacientes_Camas> pacienteOptional = repository.findByCama_Id(id);
+
+        if(pacienteOptional.isPresent()){
+            return new ResponseEntity<>(new ApiResponse(pacienteOptional, HttpStatus.OK,"Obteniendo información de la cama"), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "cama no encontrada", true), HttpStatus.NOT_FOUND);
+    }
+
+
 }
