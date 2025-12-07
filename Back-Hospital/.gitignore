@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
+serviceAccountKey.json
+*.json
+
 ### STS ###
 .apt_generated
 .classpath
