@@ -77,6 +77,8 @@ public class MainSecurity {
                                 .requestMatchers("/api/cama/disponibles/isla/**").hasAnyRole("ISLA")
                                 .requestMatchers("/api/enfermero/camas/**").hasAnyRole("ENFERMERO")
                                 .requestMatchers("/api/pc/find-pc/**").hasAnyRole("ISLA", "ENFERMERO")
+                                .requestMatchers("/api/isla/detalle/**").hasAnyRole("ISLA")
+                                .requestMatchers("/api/paciente/alta/**").hasAnyRole("ISLA")
 
                                 .anyRequest().authenticated()
                 )

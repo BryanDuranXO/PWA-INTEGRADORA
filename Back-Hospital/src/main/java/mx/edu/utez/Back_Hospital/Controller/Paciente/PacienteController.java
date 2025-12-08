@@ -50,4 +50,9 @@ public class PacienteController {
         return pacienteService.tokenEnabled(dto.getId(), dto.getToken());
     }
 
+    @PatchMapping("/alta/{id}")
+    public ResponseEntity<ApiResponse> AltaPaciente(@PathVariable Long id){
+        return pacienteService.DarAlta(id);
+    }
+
 }

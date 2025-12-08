@@ -49,7 +49,9 @@ public class Pacientes_CamasService {
         if(!camaBeanOptional.isPresent()){
             return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "cama no encontrada", true), HttpStatus.NOT_FOUND);
         }
-
+        CamaBean camaBean = camaBeanOptional.get();
+        camaBean.setOcupada(true);
+        camaRepository.save(camaBean);
         return new ResponseEntity<>(new ApiResponse(repository.saveAndFlush(pacientesCamas), HttpStatus.CREATED, "paciente asignado a cama correctamente"), HttpStatus.CREATED);
     }
 

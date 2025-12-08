@@ -1,6 +1,9 @@
 package mx.edu.utez.Back_Hospital.Service.Isla;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
+import mx.edu.utez.Back_Hospital.Model.Cama.DTO.CamaDetalle;
+import mx.edu.utez.Back_Hospital.Model.Enfermero.DTO.EnfermeroDetalle;
+import mx.edu.utez.Back_Hospital.Model.Isla.DTO.DetalleIslaDTO;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,28 @@ public class IslaService {
         return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "usuario no encontrado", true), HttpStatus.NOT_FOUND);
 
     }
+
+
+    public DetalleIslaDTO buildDetalle(IslaBean isla) {
+        List<EnfermeroDetalle> enfermeros = isla.getEnfermeroBeanSet()
+                .stream()
+                .map(EnfermeroDetalle::new)
+                .toList();
+
+        List<CamaDetalle> camas = isla.getCamaBeans()
+                .stream()
+                .map(CamaDetalle::new)
+                .toList();
+
+        return new DetalleIslaDTO(
+                isla.getId(),
+                isla.getNumero(),
+                isla.getToken(),
+                enfermeros,
+                camas
+        );
+    }
+
 
 
 }

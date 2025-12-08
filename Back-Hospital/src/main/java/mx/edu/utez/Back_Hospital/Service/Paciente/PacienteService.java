@@ -1,9 +1,13 @@
 package mx.edu.utez.Back_Hospital.Service.Paciente;
 
 import mx.edu.utez.Back_Hospital.Config.ApiResponse;
+import mx.edu.utez.Back_Hospital.Model.Cama.CamaBean;
+import mx.edu.utez.Back_Hospital.Model.Cama.CamaRepository;
 import mx.edu.utez.Back_Hospital.Model.Isla.IslaBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteBean;
 import mx.edu.utez.Back_Hospital.Model.Paciente.PacienteRepository;
+import mx.edu.utez.Back_Hospital.Model.Pacientes_Camas.Pacientes_Camas;
+import mx.edu.utez.Back_Hospital.Model.Pacientes_Camas.Pacientes_CamasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,12 @@ public class PacienteService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Pacientes_CamasRepository pacientes_camasRepository;
+
+    @Autowired
+    private CamaRepository camaRepository;
 
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> getAllPacientes(){
@@ -96,4 +106,55 @@ public class PacienteService {
         return new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, "usuario no encontrado", true), HttpStatus.NOT_FOUND);
 
     }
+
+    @Transactional(rollbackFor = {SQLException.class})
+    public ResponseEntity<ApiResponse> DarAlta(Long id){
+        Optional<PacienteBean> pacienteOptional = pacienteRepository.findById(id);
+
+        if (pacienteOptional.isEmpty()) {
+            return new ResponseEntity<>(
+                    new ApiResponse(HttpStatus.NOT_FOUND, "Paciente no encontrado", true),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        PacienteBean paciente = pacienteOptional.get();
+        paciente.setAlta(true);
+
+        // 🔥 Buscar la relación Paciente-Cama por el ID del paciente
+        Optional<Pacientes_Camas> optionalPC = pacientes_camasRepository.findByPacienteId(paciente.getId());
+        if (optionalPC.isEmpty()) {
+            return new ResponseEntity<>(
+                    new ApiResponse(HttpStatus.NOT_FOUND, "No se encontró relación Paciente-Cama", true),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        Pacientes_Camas pc = optionalPC.get();
+        pc.setActivo(false);
+
+        // 🔥 Obtener la cama asignada
+        Optional<CamaBean> camaBeanOptional = camaRepository.findById(pc.getCama().getId());
+        if (camaBeanOptional.isEmpty()) {
+            return new ResponseEntity<>(
+                    new ApiResponse(HttpStatus.NOT_FOUND, "No se encontró la cama asignada", true),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        CamaBean cama = camaBeanOptional.get();
+        cama.setOcupada(false);
+
+        paciente.setToken("tokenDefault");
+
+        pacienteRepository.save(paciente);
+        pacientes_camasRepository.save(pc);
+        camaRepository.save(cama);
+
+        return new ResponseEntity<>(
+                new ApiResponse(HttpStatus.OK, "Alta correctamente", false),
+                HttpStatus.OK
+        );
+    }
+
 }

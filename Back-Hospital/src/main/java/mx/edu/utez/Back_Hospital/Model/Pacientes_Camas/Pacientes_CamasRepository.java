@@ -17,4 +17,6 @@ public interface Pacientes_CamasRepository extends JpaRepository<Pacientes_Camas
 
     Optional<Pacientes_Camas> findByCama_Id(Long idCama);
 
+    Optional<Pacientes_Camas> findByPacienteId(Long idPaciente);
+
 }

@@ -55,7 +55,7 @@ public class AlertaService {
         NotificationRequest reqEnfermero = new NotificationRequest();
         reqEnfermero.setToken(enfermero.getToken());
         reqEnfermero.setTitle("Paciente solicita ayuda");
-        reqEnfermero.setBody("Un paciente asignado requiere asistencia");
+        reqEnfermero.setBody("Un paciente asignado en cama: " + cama.getCama() +" requiere asistencia");
         reqEnfermero.setData(Map.of(
                 "pacienteId", idPaciente.toString(),
                 "camaId", cama.getId().toString()
@@ -64,7 +64,7 @@ public class AlertaService {
         NotificationRequest reqIsla = new NotificationRequest();
         reqIsla.setToken(isla.getToken());
         reqIsla.setTitle("Alerta de paciente");
-        reqIsla.setBody("Un paciente en una cama de esta isla solicita ayuda");
+        reqIsla.setBody("Un paciente en cama: " + cama.getCama()+ " de esta isla solicita ayuda");
         reqIsla.setData(Map.of(
                 "pacienteId", idPaciente.toString(),
                 "camaId", cama.getId().toString()

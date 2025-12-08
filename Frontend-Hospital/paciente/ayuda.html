@@ -51,7 +51,15 @@
         <button class="btn btn-primary" onclick="window.location.href='./index.html'">
             Inicio Paciente
         </button>
+
+        <button class="btn btn-primary">
+            <a  onclick="logout()">
+                Cerrar Sesión
+            </a>
+        </button>
     </div>
+
+
 </nav>
 
 <!-- CONTENIDO CENTRADO -->
@@ -155,6 +163,15 @@
         }
     });
 
+    function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('fcmToken');
+            localStorage.removeItem('patient_linked_bed');
+            localStorage.removeItem('username');
+            window.location.href = '../inicio.html';
+        }
     PatchToken();
 </script>
 

@@ -131,6 +131,11 @@
                 Ir a Ayuda
             </a>
         </div>
+        <div class="ms-auto">
+            <a  onclick="logout()" class="btn btn-primary">
+                Cerrar Sesión
+            </a>
+        </div>
     </nav>
 
     <!-- ▬▬▬ CONTENEDOR PRINCIPAL ▬▬▬ -->
@@ -408,6 +413,16 @@
             const debugEl = document.getElementById("debugText");
             const timestamp = new Date().toLocaleTimeString();
             debugEl.innerHTML = `[${timestamp}] ${message}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('fcmToken');
+            localStorage.removeItem('patient_linked_bed');
+            localStorage.removeItem('username');
+            window.location.href = '../inicio.html';
         }
     </script>
 

@@ -279,7 +279,7 @@
 </head>
 
 <body>
-    <button class="logout-btn" onclick="location.reload()">Cerrar</button>
+    <button class="logout-btn" onclick="logout()">Cerrar</button>
 
     <div class="header">
         <h1>👨‍⚕️ Panel de Enfermero</h1>
@@ -667,6 +667,45 @@
             } else if (type === "error") {
                 cameraStatusEl.classList.add("status-error");
             }
+        }
+
+            async function PatchToken() {
+        const fcmToken = localStorage.getItem('fcmToken');
+        const IdUser = localStorage.getItem('userId');
+
+        const data = {
+            id: IdUser,
+            token: fcmToken
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/enfermero/patch-token', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                console.warn("No se pudo actualizar el token FCM");
+            } else {
+                console.log("Token FCM actualizado correctamente");
+            }
+
+        } catch (error) {
+            console.error("Error en PATCH token FCM:", error);
+        }
+    }
+
+    PatchToken();
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('fcmToken');
+            localStorage.removeItem('patient_linked_bed');
+            localStorage.removeItem('username');
+            window.location.href = '../inicio.html';
         }
     </script>
 </body>
